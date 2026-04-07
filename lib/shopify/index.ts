@@ -232,15 +232,27 @@ function getObjectValue(value: unknown) {
     : null;
 }
 
+function getMercadoPagoPaymentIdCandidate(value: unknown) {
+  if (typeof value === "number" && Number.isFinite(value)) {
+    return value.toString();
+  }
+
+  if (typeof value !== "string") {
+    return null;
+  }
+
+  const normalized = value.trim();
+  return /^\d+$/.test(normalized) ? normalized : null;
+}
+
 function extractMercadoPagoPaymentId(payload: Record<string, unknown>) {
   const data = getObjectValue(payload.data);
 
   return (
-    getStringValue(data?.id) ||
-    (typeof data?.id === "number" ? data.id.toString() : null) ||
-    getStringValue(payload.payment_id) ||
-    getStringValue(payload.collection_id) ||
-    getStringValue(payload.id)
+    getMercadoPagoPaymentIdCandidate(data?.id) ||
+    getMercadoPagoPaymentIdCandidate(payload.payment_id) ||
+    getMercadoPagoPaymentIdCandidate(payload.collection_id) ||
+    getMercadoPagoPaymentIdCandidate(payload.id)
   );
 }
 
