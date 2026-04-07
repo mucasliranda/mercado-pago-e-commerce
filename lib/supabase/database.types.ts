@@ -89,6 +89,18 @@ export type Database = {
           name: string;
           slug: string;
         };
+        Insert: {
+          created_at?: string;
+          id?: never;
+          name: string;
+          slug: string;
+        };
+        Update: {
+          created_at?: string;
+          id?: never;
+          name?: string;
+          slug?: string;
+        };
       };
       menu_items: {
         Row: {
@@ -120,6 +132,7 @@ export type Database = {
           product_id: number;
           quantity: number;
           unit_price: number;
+          variant_id: number | null;
         };
         Insert: {
           id?: never;
@@ -128,6 +141,16 @@ export type Database = {
           product_id: number;
           quantity: number;
           unit_price: number;
+          variant_id?: number | null;
+        };
+        Update: {
+          id?: never;
+          line_total?: number;
+          order_id?: number;
+          product_id?: number;
+          quantity?: number;
+          unit_price?: number;
+          variant_id?: number | null;
         };
       };
       orders: {
@@ -212,30 +235,194 @@ export type Database = {
           status: string;
           updated_at: string;
         };
+        Insert: {
+          amount: number;
+          created_at?: string;
+          gateway?: string;
+          gateway_payment_id?: string | null;
+          id?: never;
+          order_id: number;
+          raw_payload?: Json | null;
+          status: string;
+          updated_at?: string;
+        };
+        Update: {
+          amount?: number;
+          created_at?: string;
+          gateway?: string;
+          gateway_payment_id?: string | null;
+          id?: never;
+          order_id?: number;
+          raw_payload?: Json | null;
+          status?: string;
+          updated_at?: string;
+        };
       };
       product_images: {
         Row: {
           alt_text: string | null;
           bucket: string | null;
           created_at: string;
+          height: number;
           id: number;
           image_url: string;
+          is_featured: boolean;
           position: number;
           product_id: number;
           storage_path: string | null;
+          width: number;
+        };
+        Insert: {
+          alt_text?: string | null;
+          bucket?: string | null;
+          created_at?: string;
+          height?: number;
+          id?: never;
+          image_url: string;
+          is_featured?: boolean;
+          position?: number;
+          product_id: number;
+          storage_path?: string | null;
+          width?: number;
+        };
+        Update: {
+          alt_text?: string | null;
+          bucket?: string | null;
+          created_at?: string;
+          height?: number;
+          id?: never;
+          image_url?: string;
+          is_featured?: boolean;
+          position?: number;
+          product_id?: number;
+          storage_path?: string | null;
+          width?: number;
         };
       };
       products: {
         Row: {
           active: boolean;
+          available_for_sale: boolean;
           category_id: number | null;
           created_at: string;
           description: string | null;
+          description_html: string | null;
+          currency_code: string;
           id: number;
           name: string;
           price: number;
+          seo_description: string | null;
+          seo_title: string | null;
           slug: string;
+          tags: string[];
+          title: string | null;
           updated_at: string;
+        };
+        Insert: {
+          active?: boolean;
+          available_for_sale?: boolean;
+          category_id?: number | null;
+          created_at?: string;
+          description?: string | null;
+          description_html?: string | null;
+          currency_code?: string;
+          id?: never;
+          name: string;
+          price: number;
+          seo_description?: string | null;
+          seo_title?: string | null;
+          slug: string;
+          tags?: string[];
+          title?: string | null;
+          updated_at?: string;
+        };
+        Update: {
+          active?: boolean;
+          available_for_sale?: boolean;
+          category_id?: number | null;
+          created_at?: string;
+          description?: string | null;
+          description_html?: string | null;
+          currency_code?: string;
+          id?: never;
+          name?: string;
+          price?: number;
+          seo_description?: string | null;
+          seo_title?: string | null;
+          slug?: string;
+          tags?: string[];
+          title?: string | null;
+          updated_at?: string;
+        };
+      };
+      product_options: {
+        Row: {
+          created_at: string;
+          id: number;
+          name: string;
+          position: number;
+          product_id: number;
+          updated_at: string;
+          values: string[];
+        };
+        Insert: {
+          created_at?: string;
+          id?: never;
+          name: string;
+          position?: number;
+          product_id: number;
+          updated_at?: string;
+          values?: string[];
+        };
+        Update: {
+          created_at?: string;
+          id?: never;
+          name?: string;
+          position?: number;
+          product_id?: number;
+          updated_at?: string;
+          values?: string[];
+        };
+      };
+      product_variants: {
+        Row: {
+          available_for_sale: boolean;
+          created_at: string;
+          currency_code: string;
+          id: number;
+          position: number;
+          price: number;
+          product_id: number;
+          selected_options: Json;
+          sku: string | null;
+          title: string;
+          updated_at: string;
+        };
+        Insert: {
+          available_for_sale?: boolean;
+          created_at?: string;
+          currency_code?: string;
+          id?: never;
+          position?: number;
+          price: number;
+          product_id: number;
+          selected_options?: Json;
+          sku?: string | null;
+          title: string;
+          updated_at?: string;
+        };
+        Update: {
+          available_for_sale?: boolean;
+          created_at?: string;
+          currency_code?: string;
+          id?: never;
+          position?: number;
+          price?: number;
+          product_id?: number;
+          selected_options?: Json;
+          sku?: string | null;
+          title?: string;
+          updated_at?: string;
         };
       };
       profiles: {

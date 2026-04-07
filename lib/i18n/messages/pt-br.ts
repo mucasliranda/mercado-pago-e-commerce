@@ -8,7 +8,7 @@ export const ptBR = {
     },
     homeDescription:
       "Loja virtual de alta performance criada com Next.js, Supabase e Mercado Pago.",
-    authAccess: "Acesso Aurora Store",
+    authAccess: "Acesso Mago das Vendas",
     logoLabel: "logo",
     copyright: "Todos os direitos reservados.",
     viewSource: "Ver codigo-fonte",
@@ -21,11 +21,14 @@ export const ptBR = {
       login: "Entrar",
       signup: "Criar conta",
       logout: "Sair",
+      admin: "Admin",
       myAccount: "Minha conta",
       backToCatalog: "Voltar ao catalogo",
       goHome: "Ir para a home",
       backToLogin: "Voltar para login",
       retry: "Tentar novamente",
+      showPassword: "Mostrar senha",
+      hidePassword: "Ocultar senha",
       open: "Abrir",
       close: "Fechar",
     },
@@ -157,6 +160,276 @@ export const ptBR = {
       },
     },
   },
+  admin: {
+    metadataTitle: "Admin",
+    badge: "Painel admin",
+    title: "Controle interno da operacao, com acesso por nivel de permissao.",
+    description:
+      "Esta primeira etapa abre a base do painel administrativo com foco na criacao de usuarios com role elevada, sem romper a linguagem visual da storefront.",
+    roles: {
+      admin: "Admin",
+      super_admin: "Super admin",
+      customer: "Cliente",
+    },
+    sidebar: {
+      title: "Centro de operacoes",
+      description:
+        "Escolha um modulo na lateral para editar a area certa sem misturar fluxos.",
+    },
+    navigation: {
+      products: "Produtos",
+      productsDescription: "Cadastro, edicao e operacao de catalogo.",
+      users: "Usuarios",
+      usersDescription: "Criacao e gestao de acessos administrativos.",
+      orders: "Pedidos",
+      ordersDescription: "Acompanhamento operacional e entregas.",
+    },
+    summary: {
+      currentAccess: "Seu acesso",
+      currentUser: "Usuario atual",
+      phase: "Etapa atual",
+      phaseValue: "Criacao de usuarios",
+    },
+    createUser: {
+      title: "Criar usuario administrativo",
+      description:
+        "Crie novas contas com role de admin ou super admin e deixe o perfil pronto para os proximos modulos do painel.",
+      restrictedDescription:
+        "Voce tem acesso ao painel admin, mas a criacao de usuarios fica restrita a perfis super admin.",
+      restrictedTitle: "Criacao restrita nesta fase",
+      restrictedBody:
+        "Assim que validarmos esta primeira etapa, admins seguem com o painel liberado para acompanhar pedidos, enquanto o cadastro de novos perfis elevados continua sob responsabilidade de super admins.",
+      fields: {
+        fullName: "Nome completo",
+        role: "Nivel de acesso",
+      },
+      placeholders: {
+        fullName: "Ex.: Marina Costa",
+        email: "admin@mago.com",
+        password: "Minimo de 8 caracteres",
+      },
+      helper:
+        "Os usuarios criados aqui recebem email ja confirmado e ficam com o role salvo no perfil da base. Use esse fluxo apenas para acessos internos.",
+      submit: "Criar usuario",
+      pending: "Criando usuario...",
+      success: "{{email}} criado com sucesso como {{role}}.",
+      errors: {
+        superAdminOnly:
+          "Somente super admins podem criar novos usuarios administrativos.",
+        fullNameRequired: "Informe o nome completo do usuario.",
+        invalidEmail: "Informe um email valido.",
+        shortPassword: "A senha precisa ter pelo menos 8 caracteres.",
+        invalidRole: "Selecione um nivel de acesso valido.",
+        emailInUse: "Ja existe um usuario com esse email.",
+        createFailed: "Nao foi possivel criar o usuario agora.",
+        profileSyncFailed:
+          "O usuario foi criado, mas nao foi possivel sincronizar o perfil administrativo.",
+      },
+    },
+    permissions: {
+      title: "Escopo por permissao",
+      admin:
+        "Pode acessar o painel e, nas proximas etapas, acompanhar pedidos e marcar entregas.",
+      superAdmin:
+        "Pode criar admins e super admins, alem de evoluir para gestao de catalogo e entregas.",
+    },
+    users: {
+      title: "Usuarios administrativos",
+      description:
+        "Crie e organize acessos internos com uma tela focada em roles elevadas e contexto operacional claro.",
+      listTitle: "Todos os usuarios",
+      listDescription:
+        "Veja a base completa de usuarios da autenticacao com contexto de role, data de criacao e atividade recente.",
+      emptyTitle: "Nenhum usuario encontrado.",
+      emptyDescription:
+        "Assim que houver contas cadastradas na autenticacao, elas aparecem aqui para acompanhamento administrativo.",
+      noNameAvailable: "Nome nao informado",
+      noRecentAccess: "Sem acesso recente",
+      metrics: {
+        totalUsers: "Total de usuarios",
+        internalAccess: "Acessos internos",
+        customers: "Clientes",
+        recentActivity: "Acessos nos ultimos 30 dias",
+      },
+      fields: {
+        createdAt: "Criado em",
+        lastSignIn: "Ultimo acesso",
+      },
+      status: {
+        confirmed: "Conta confirmada",
+        pending: "Aguardando confirmacao",
+      },
+      accountState: {
+        active: "Conta ativa",
+        disabled: "Conta desativada",
+      },
+    },
+    userManagement: {
+      confirmDelete:
+        "Tem certeza que deseja apagar a conta {{email}}? Esta acao nao pode ser desfeita.",
+      actions: {
+        deactivate: "Desativar",
+        reactivate: "Reativar",
+        delete: "Apagar",
+      },
+      success: {
+        deactivated: "{{email}} foi desativado com sucesso.",
+        reactivated: "{{email}} foi reativado com sucesso.",
+        deleted: "{{email}} foi apagado com sucesso.",
+      },
+      errors: {
+        superAdminOnly:
+          "Somente super admins podem alterar contas administrativas.",
+        loadTargetFailed:
+          "Nao foi possivel carregar a conta selecionada.",
+        adminOnly:
+          "Apenas contas com role admin podem ser alteradas por este fluxo.",
+        invalidTarget: "Selecione uma conta admin valida para continuar.",
+        deactivateFailed: "Nao foi possivel desativar esta conta agora.",
+        reactivateFailed: "Nao foi possivel reativar esta conta agora.",
+        deleteFailed: "Nao foi possivel apagar esta conta agora.",
+      },
+    },
+    products: {
+      title: "Produtos",
+      description:
+        "Gerencie o catalogo com visibilidade de status, preco, imagem e disponibilidade sem sair da linguagem da storefront.",
+      metrics: {
+        totalProducts: "Total de produtos",
+        activeProducts: "Produtos ativos",
+        availableProducts: "Disponiveis para venda",
+        categories: "Categorias",
+      },
+      listTitle: "Catalogo da loja",
+      listDescription:
+        "Veja todos os produtos, acompanhe o estado do catalogo e abra rapidamente o formulario para criar ou atualizar informacoes.",
+      emptyTitle: "Nenhum produto cadastrado.",
+      emptyDescription:
+        "Assim que o catalogo receber itens, eles aparecem aqui com status, categoria, tags e acesso rapido para edicao.",
+      noCategory: "Sem categoria",
+      noTags: "Sem tags ainda",
+      state: {
+        active: "Ativo",
+        inactive: "Inativo",
+        available: "Disponivel",
+        unavailable: "Indisponivel",
+      },
+      fields: {
+        title: "Titulo do produto",
+        slug: "Slug",
+        price: "Preco",
+        category: "Categoria",
+        description: "Descricao",
+        imageUrl: "URL da imagem",
+        imageAlt: "Texto alternativo da imagem",
+        tags: "Tags",
+        active: "Produto ativo",
+        activeDescription:
+          "Mantem o produto visivel nas consultas da storefront e no catalogo publico.",
+        availableForSale: "Disponivel para venda",
+        availableForSaleDescription:
+          "Controla se a compra pode seguir no fluxo do produto e do carrinho.",
+        updatedAt: "Ultima atualizacao",
+        variants: "Variantes",
+      },
+      placeholders: {
+        title: "Ex.: Estacao Orbital Pro",
+        slug: "ex-estacao-orbital-pro",
+        category: "Selecione uma categoria",
+        description:
+          "Descreva o produto com clareza para a vitrine e para o checkout.",
+        imageUrl: "https://...",
+        imageAlt: "Descricao curta da imagem",
+        tags: "lançamento, destaque, premium",
+      },
+      variantCountSingle: "{{count}} variante",
+      variantCountPlural: "{{count}} variantes",
+      form: {
+        createTitle: "Novo produto",
+        editTitle: "Editando {{title}}",
+        description:
+          "Preencha os campos essenciais do produto para manter a operacao do catalogo centralizada no painel.",
+      },
+      actions: {
+        edit: "Editar",
+        create: "Salvar produto",
+        update: "Atualizar produto",
+        pending: "Salvando produto...",
+        createNew: "Criar novo produto",
+      },
+      restrictedBody:
+        "Voce pode acompanhar o catalogo, mas somente super admins podem criar ou alterar produtos.",
+      errors: {
+        superAdminOnly:
+          "Somente super admins podem criar ou editar produtos.",
+        titleRequired: "Informe o titulo do produto.",
+        slugRequired: "Informe um slug valido para o produto.",
+        invalidPrice: "Informe um preco valido para o produto.",
+        slugInUse: "Ja existe um produto com esse slug.",
+        saveFailed: "Nao foi possivel salvar o produto agora.",
+        variantSyncFailed:
+          "O produto foi salvo, mas houve um erro ao sincronizar as variantes.",
+        imageSyncFailed:
+          "O produto foi salvo, mas houve um erro ao sincronizar a imagem principal.",
+      },
+      success: {
+        created: "{{title}} foi criado com sucesso.",
+        updated: "{{title}} foi atualizado com sucesso.",
+      },
+    },
+    orders: {
+      title: "Pedidos",
+      description:
+        "Acompanhe o ciclo dos pedidos com contexto de pagamento, itens comprados e uma acao direta para marcar entregas concluidas.",
+      metrics: {
+        totalOrders: "Total de pedidos",
+        awaitingDelivery: "Aguardando entrega",
+        delivered: "Entregues",
+        grossRevenue: "Receita bruta",
+      },
+      listTitle: "Operacao de pedidos",
+      listDescription:
+        "Monitore cada pedido com os dados principais do checkout, acompanhe o pagamento e marque como entregue quando a operacao for concluida.",
+      emptyTitle: "Nenhum pedido encontrado.",
+      emptyDescription:
+        "Quando a loja receber compras autenticadas, os pedidos aparecem aqui com seus itens, status e referencia de pagamento.",
+      fields: {
+        customer: "Cliente",
+        email: "Email",
+        createdAt: "Criado em",
+        updatedAt: "Atualizado em",
+        paymentReference: "Referencia de pagamento",
+        items: "Itens",
+        variant: "Variante",
+        latestPaymentStatus: "Ultimo status do pagamento",
+      },
+      actions: {
+        markDelivered: "Marcar como entregue",
+        delivered: "Pedido entregue",
+        waitingPayment: "Aguardando pagamento",
+      },
+      errors: {
+        invalidTarget: "Nao foi possivel localizar o pedido informado.",
+        notReadyForDelivery:
+          "A entrega so pode ser marcada quando o pedido estiver pago.",
+        deliveryUpdateFailed:
+          "Nao foi possivel atualizar o pedido para entregue agora.",
+      },
+      success: {
+        delivered: "Pedido #{{id}} marcado como entregue.",
+        alreadyDelivered: "Esse pedido ja estava marcado como entregue.",
+      },
+    },
+    comingSoon: {
+      title: "Modulo preparado para a proxima etapa",
+    },
+    nextSteps: {
+      title: "Proximas entregas",
+      orders: "Acompanhamento operacional dos pedidos em tempo real.",
+      delivery: "Alteracao manual do status do pedido para entregue.",
+      catalog: "Gestao de produtos e usuarios com mais profundidade.",
+    },
+  },
   cart: {
     title: "Meu carrinho",
     openCart: "Abrir carrinho",
@@ -239,7 +512,7 @@ export const ptBR = {
       "Houve um problema temporario na storefront. Tente novamente em instantes.",
   },
   welcomeToast: {
-    title: "Bem-vindo a Aurora Store!",
+    title: "Bem-vindo a Mago das Vendas!",
     description:
       "Esta storefront combina Next.js, Supabase e Mercado Pago para oferecer uma experiencia rapida do catalogo ao checkout.",
     cta: "Criar minha versao",

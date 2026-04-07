@@ -1,10 +1,10 @@
 import { AuthNav } from "components/auth/auth-nav";
 import CartModal from "components/cart/modal";
 import LogoSquare from "components/logo-square";
+import { getCurrentAdminContext } from "lib/admin";
 import { getTranslations } from "lib/i18n/server";
 import { getMenu } from "lib/shopify";
 import { Menu } from "lib/shopify/types";
-import { createClient } from "lib/supabase/server";
 import Link from "next/link";
 import { Suspense } from "react";
 import { LanguageSwitcher } from "./language-switcher";
@@ -15,15 +15,14 @@ const { SITE_NAME } = process.env;
 
 export async function Navbar() {
   const { locale, t } = await getTranslations();
-  const [menu, supabase] = await Promise.all([
+  const [menu, adminContext] = await Promise.all([
     getMenu("next-js-frontend-header-menu", locale),
-    createClient(),
+    getCurrentAdminContext(),
   ]);
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  const { user, isAdmin } = adminContext;
   const authMenu = [
     ...menu,
+    ...(isAdmin ? [{ title: t("common.actions.admin"), path: "/admin" }] : []),
     ...(user
       ? [{ title: t("common.actions.myAccount"), path: "/account" }]
       : [
@@ -74,7 +73,7 @@ export async function Navbar() {
         </div>
         <div className="flex items-center justify-end gap-3 md:w-1/3">
           <LanguageSwitcher />
-          <AuthNav userEmail={user?.email} />
+          <AuthNav userEmail={user?.email} canAccessAdmin={isAdmin} />
           <CartModal />
         </div>
       </div>

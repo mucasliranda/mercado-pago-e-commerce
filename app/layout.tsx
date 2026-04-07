@@ -2,7 +2,6 @@ import { Analytics } from "@vercel/analytics/next";
 import { CartProvider } from "components/cart/cart-context";
 import { I18nProvider } from "components/i18n-provider";
 import { Navbar } from "components/layout/navbar";
-import { WelcomeToast } from "components/welcome-toast";
 import { GeistSans } from "geist/font/sans";
 import { getTranslations } from "lib/i18n/server";
 import { getCart } from "lib/shopify";
@@ -44,7 +43,6 @@ export default async function RootLayout({
             <main>
               {children}
               <Toaster closeButton />
-              <WelcomeToast />
             </main>
           </CartProvider>
         </I18nProvider>
