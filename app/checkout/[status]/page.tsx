@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { persistMercadoPagoWebhook } from "lib/shopify";
 
 const contentByStatus = {
   success: {
@@ -21,7 +22,13 @@ const contentByStatus = {
 
 export default async function CheckoutStatusPage(props: {
   params: Promise<{ status: string }>;
-  searchParams?: Promise<{ external_reference?: string }>;
+  searchParams?: Promise<{
+    external_reference?: string;
+    payment_id?: string;
+    collection_id?: string;
+    status?: string;
+    collection_status?: string;
+  }>;
 }) {
   const params = await props.params;
   const searchParams = await props.searchParams;
@@ -30,6 +37,23 @@ export default async function CheckoutStatusPage(props: {
 
   if (!content) {
     notFound();
+  }
+
+  const paymentId =
+    searchParams?.payment_id || searchParams?.collection_id || undefined;
+  const paymentStatus =
+    searchParams?.status || searchParams?.collection_status || undefined;
+
+  if (searchParams?.external_reference || paymentId) {
+    try {
+      await persistMercadoPagoWebhook({
+        external_reference: searchParams?.external_reference,
+        payment_id: paymentId,
+        status: paymentStatus,
+      });
+    } catch (error) {
+      console.error("Mercado Pago checkout return sync error", error);
+    }
   }
 
   return (

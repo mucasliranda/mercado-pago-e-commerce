@@ -209,6 +209,7 @@ export type DatabaseMenuRow = {
   id: number;
   title: string;
   handle: string;
+  deleted_at?: string | null;
   menu_items?: DatabaseMenuItemRow[];
 };
 
@@ -218,6 +219,7 @@ export type DatabaseMenuItemRow = {
   title: string;
   path: string;
   position: number;
+  deleted_at?: string | null;
 };
 
 export type DatabaseCartRow = {

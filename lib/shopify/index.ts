@@ -238,6 +238,8 @@ function extractMercadoPagoPaymentId(payload: Record<string, unknown>) {
   return (
     getStringValue(data?.id) ||
     (typeof data?.id === "number" ? data.id.toString() : null) ||
+    getStringValue(payload.payment_id) ||
+    getStringValue(payload.collection_id) ||
     getStringValue(payload.id)
   );
 }
@@ -918,6 +920,8 @@ export async function getMenu(handle: string): Promise<Menu[]> {
       `,
     )
     .eq("handle", normalizedHandle)
+    .is("deleted_at", null)
+    .is("menu_items.deleted_at", null)
     .maybeSingle();
 
   if (error) {

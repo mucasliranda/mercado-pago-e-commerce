@@ -19,6 +19,10 @@ function runSupabase(args) {
   }
 }
 
+function linkProject(projectId) {
+  runSupabase(["link", "--project-ref", projectId]);
+}
+
 function requireStagingProjectId() {
   if (STAGING_PROJECT_ID) {
     return;
@@ -52,25 +56,29 @@ switch (command) {
     ]);
     break;
   case "link-prod":
-    runSupabase(["link", "--project-ref", PRODUCTION_PROJECT_ID]);
+    linkProject(PRODUCTION_PROJECT_ID);
     break;
   case "link-staging":
     requireStagingProjectId();
-    runSupabase(["link", "--project-ref", STAGING_PROJECT_ID]);
+    linkProject(STAGING_PROJECT_ID);
     break;
   case "push-config-prod":
-    runSupabase(["config", "push", "--project-ref", PRODUCTION_PROJECT_ID]);
+    linkProject(PRODUCTION_PROJECT_ID);
+    runSupabase(["config", "push"]);
     break;
   case "push-config-staging":
     requireStagingProjectId();
-    runSupabase(["config", "push", "--project-ref", STAGING_PROJECT_ID]);
+    linkProject(STAGING_PROJECT_ID);
+    runSupabase(["config", "push"]);
     break;
   case "push-db-prod":
-    runSupabase(["db", "push", "--project-ref", PRODUCTION_PROJECT_ID]);
+    linkProject(PRODUCTION_PROJECT_ID);
+    runSupabase(["db", "push"]);
     break;
   case "push-db-staging":
     requireStagingProjectId();
-    runSupabase(["db", "push", "--project-ref", STAGING_PROJECT_ID]);
+    linkProject(STAGING_PROJECT_ID);
+    runSupabase(["db", "push"]);
     break;
   default:
     console.error(

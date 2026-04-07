@@ -93,6 +93,7 @@ export type Database = {
       menu_items: {
         Row: {
           created_at: string;
+          deleted_at: string | null;
           id: number;
           menu_id: number;
           path: string;
@@ -104,6 +105,7 @@ export type Database = {
       menus: {
         Row: {
           created_at: string;
+          deleted_at: string | null;
           handle: string;
           id: number;
           title: string;
