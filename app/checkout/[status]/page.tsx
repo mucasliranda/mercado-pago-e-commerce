@@ -1,6 +1,6 @@
+import { persistMercadoPagoWebhook } from "lib/shopify";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { persistMercadoPagoWebhook } from "lib/shopify";
 
 const contentByStatus = {
   success: {
@@ -34,6 +34,10 @@ export default async function CheckoutStatusPage(props: {
   const searchParams = await props.searchParams;
   const content =
     contentByStatus[params.status as keyof typeof contentByStatus];
+
+  console.log("params", params);
+  console.log("searchParams", searchParams);
+
 
   if (!content) {
     notFound();

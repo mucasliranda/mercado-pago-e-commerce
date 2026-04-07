@@ -2,7 +2,12 @@ import "server-only";
 
 import type { Cart } from "lib/shopify/types";
 import { baseUrl } from "lib/utils";
-import { MercadoPagoConfig, Payment, Preference } from "mercadopago";
+import {
+  MercadoPagoConfig,
+  MerchantOrder,
+  Payment,
+  Preference,
+} from "mercadopago";
 
 const accessToken = process.env.MERCADO_PAGO_ACCESS_TOKEN;
 
@@ -61,6 +66,15 @@ export async function getMercadoPagoPayment(paymentId: string | number) {
   const payment = new Payment(getMercadoPagoClient());
   return payment.get({
     id: paymentId,
+  });
+}
+
+export async function getMercadoPagoMerchantOrder(
+  merchantOrderId: string | number,
+) {
+  const merchantOrder = new MerchantOrder(getMercadoPagoClient());
+  return merchantOrder.get({
+    merchantOrderId,
   });
 }
 

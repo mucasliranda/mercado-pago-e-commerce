@@ -3,6 +3,7 @@ import "server-only";
 import { DEFAULT_OPTION, TAGS } from "lib/constants";
 import {
   createCheckoutPreference,
+  getMercadoPagoMerchantOrder,
   getMercadoPagoPayment,
 } from "lib/mercado-pago";
 import {
@@ -269,6 +270,77 @@ function extractMercadoPagoStatus(payload: Record<string, unknown>) {
 
 function extractMercadoPagoAmount(payload: Record<string, unknown>) {
   return getNumberValue(payload.transaction_amount) || 0;
+}
+
+function mapMercadoPagoStatuses(status: string | null | undefined) {
+  const normalizedStatus = (status || "pending").toLowerCase();
+
+  return {
+    paymentStatus: (() => {
+      switch (normalizedStatus) {
+        case "approved":
+          return "paid";
+        case "authorized":
+          return "authorized";
+        case "refunded":
+          return "refunded";
+        case "cancelled":
+        case "rejected":
+          return "failed";
+        default:
+          return "pending";
+      }
+    })(),
+    orderStatus: (() => {
+      switch (normalizedStatus) {
+        case "approved":
+          return "paid";
+        case "refunded":
+          return "refunded";
+        case "cancelled":
+        case "rejected":
+          return "cancelled";
+        default:
+          return "pending_payment";
+      }
+    })(),
+    paymentRowStatus: (() => {
+      switch (normalizedStatus) {
+        case "approved":
+          return "approved";
+        case "refunded":
+          return "refunded";
+        case "cancelled":
+          return "cancelled";
+        case "rejected":
+          return "rejected";
+        default:
+          return "pending";
+      }
+    })(),
+  };
+}
+
+function extractMercadoPagoResourceType(payload: Record<string, unknown>) {
+  const type =
+    getStringValue(payload.type) ||
+    getStringValue(payload.topic) ||
+    getStringValue(payload.resource) ||
+    getStringValue(payload.action);
+
+  if (!type) {
+    return null;
+  }
+
+  if (type.includes("merchant_order")) {
+    return "merchant_order";
+  }
+
+  if (type.includes("payment")) {
+    return "payment";
+  }
+
+  return type;
 }
 
 function reshapeCart(cart: CartRecord): Cart {
@@ -1306,10 +1378,32 @@ export async function revalidate(req: NextRequest): Promise<NextResponse> {
 export async function persistMercadoPagoWebhook(
   payload: Record<string, unknown>,
 ) {
+  const resourceType = extractMercadoPagoResourceType(payload);
   const paymentId = extractMercadoPagoPaymentId(payload);
   let normalizedPayload: Record<string, unknown> = payload;
 
-  if (paymentId) {
+  if (resourceType === "merchant_order" && paymentId) {
+    const merchantOrder = await getMercadoPagoMerchantOrder(paymentId);
+    const preferredPayment =
+      merchantOrder.payments?.find((payment) => payment.status === "approved") ||
+      merchantOrder.payments?.[0];
+
+    normalizedPayload = {
+      webhook: payload,
+      merchant_order: merchantOrder,
+      external_reference: merchantOrder.external_reference,
+      status:
+        preferredPayment?.status ||
+        merchantOrder.order_status ||
+        merchantOrder.status,
+      transaction_amount:
+        preferredPayment?.transaction_amount ||
+        preferredPayment?.total_paid_amount ||
+        merchantOrder.total_amount,
+      id: preferredPayment?.id?.toString() || paymentId,
+      payment_id: preferredPayment?.id?.toString(),
+    };
+  } else if (paymentId) {
     const payment = await getMercadoPagoPayment(paymentId);
     normalizedPayload = {
       webhook: payload,
@@ -1328,14 +1422,106 @@ export async function persistMercadoPagoWebhook(
     return;
   }
 
-  await supabaseAdmin().rpc("process_mercado_pago_webhook", {
-    p_external_reference: externalReference,
-    p_gateway_payment_id:
-      extractMercadoPagoPaymentId(normalizedPayload) || undefined,
-    p_status: extractMercadoPagoStatus(normalizedPayload),
-    p_amount: extractMercadoPagoAmount(normalizedPayload),
-    p_payload: normalizedPayload as Json,
-  });
+  const gatewayPaymentId = extractMercadoPagoPaymentId(normalizedPayload);
+  const paymentGatewayStatus = extractMercadoPagoStatus(normalizedPayload);
+  const amount = extractMercadoPagoAmount(normalizedPayload);
+  const { paymentStatus, orderStatus, paymentRowStatus } =
+    mapMercadoPagoStatuses(paymentGatewayStatus);
+
+  const { data: order, error: orderError } = await supabaseAdmin()
+    .from("orders")
+    .select("id, cart_id, mercadopago_payment_id")
+    .or(`external_reference.eq.${externalReference},id.eq.${externalReference}`)
+    .limit(1)
+    .maybeSingle<{ id: number; cart_id: string | null; mercadopago_payment_id: string | null }>();
+
+  if (orderError) {
+    throw orderError;
+  }
+
+  if (!order) {
+    throw new Error(
+      `Order not found for external reference ${externalReference}`,
+    );
+  }
+
+  if (gatewayPaymentId) {
+    const { data: existingPayment, error: existingPaymentError } =
+      await supabaseAdmin()
+        .from("payments")
+        .select("id")
+        .eq("gateway_payment_id", gatewayPaymentId)
+        .maybeSingle<{ id: number }>();
+
+    if (existingPaymentError) {
+      throw existingPaymentError;
+    }
+
+    if (existingPayment) {
+      const { error: paymentUpdateError } = await supabaseAdmin()
+        .from("payments")
+        .update({
+          order_id: order.id,
+          status: paymentRowStatus,
+          amount: Math.max(amount, 0),
+          raw_payload: normalizedPayload as Json,
+        })
+        .eq("id", existingPayment.id);
+
+      if (paymentUpdateError) {
+        throw paymentUpdateError;
+      }
+    } else {
+      const { error: paymentInsertError } = await supabaseAdmin()
+        .from("payments")
+        .insert({
+          order_id: order.id,
+          gateway: "mercado_pago",
+          gateway_payment_id: gatewayPaymentId,
+          status: paymentRowStatus,
+          amount: Math.max(amount, 0),
+          raw_payload: normalizedPayload as Json,
+        });
+
+      if (paymentInsertError) {
+        throw paymentInsertError;
+      }
+    }
+  }
+
+  const { error: orderUpdateError } = await supabaseAdmin()
+    .from("orders")
+    .update({
+      payment_status: paymentStatus,
+      status: orderStatus,
+      mercadopago_payment_id:
+        gatewayPaymentId || order.mercadopago_payment_id || null,
+    })
+    .eq("id", order.id);
+
+  if (orderUpdateError) {
+    throw orderUpdateError;
+  }
+
+  const nextCartStatus =
+    orderStatus === "paid"
+      ? "completed"
+      : orderStatus === "cancelled"
+        ? "abandoned"
+        : null;
+
+  if (order.cart_id && nextCartStatus) {
+    const { error: cartUpdateError } = await supabaseAdmin()
+      .from("carts")
+      .update({
+        status: nextCartStatus,
+      })
+      .eq("id", order.cart_id);
+
+    if (cartUpdateError) {
+      throw cartUpdateError;
+    }
+  }
 }
 
 export async function getMercadoPagoWebhookSignature() {
