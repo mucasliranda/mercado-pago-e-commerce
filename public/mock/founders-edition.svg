@@ -1,0 +1,11 @@
+<svg width="1200" height="1200" viewBox="0 0 1200 1200" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="1200" height="1200" fill="#1C1917"/>
+  <rect x="250" y="220" width="700" height="760" rx="48" fill="#292524" stroke="#F5F5F4" stroke-width="8"/>
+  <rect x="320" y="300" width="560" height="430" rx="24" fill="#44403C"/>
+  <circle cx="600" cy="515" r="120" fill="#E7E5E4"/>
+  <path d="M600 430L626 490H690L638 528L658 590L600 552L542 590L562 528L510 490H574L600 430Z" fill="#1C1917"/>
+  <rect x="360" y="790" width="480" height="74" rx="18" fill="#F5F5F4"/>
+  <text x="420" y="840" fill="#1C1917" font-size="40" font-family="Arial, sans-serif" font-weight="700">FOUNDERS EDITION</text>
+  <text x="120" y="150" fill="#FAFAF9" font-size="84" font-family="Arial, sans-serif" font-weight="700">Aurora X Founders</text>
+  <text x="130" y="1030" fill="#D6D3D1" font-size="40" font-family="Arial, sans-serif">Versão de colecionador com acabamento especial</text>
+</svg>

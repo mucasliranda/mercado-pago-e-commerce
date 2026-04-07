@@ -1,0 +1,14 @@
+<svg width="1200" height="1200" viewBox="0 0 1200 1200" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="1200" height="1200" fill="#0B1020"/>
+  <circle cx="930" cy="220" r="220" fill="#1D4ED8" fill-opacity="0.45"/>
+  <circle cx="280" cy="910" r="260" fill="#22C55E" fill-opacity="0.28"/>
+  <rect x="180" y="300" width="840" height="520" rx="56" fill="#111827" stroke="#93C5FD" stroke-width="8"/>
+  <rect x="260" y="380" width="680" height="360" rx="32" fill="#0F172A"/>
+  <rect x="320" y="460" width="180" height="180" rx="90" fill="#1D4ED8"/>
+  <rect x="700" y="450" width="64" height="64" rx="32" fill="#F8FAFC"/>
+  <rect x="790" y="540" width="64" height="64" rx="32" fill="#F8FAFC"/>
+  <rect x="700" y="540" width="64" height="64" rx="32" fill="#38BDF8"/>
+  <rect x="790" y="450" width="64" height="64" rx="32" fill="#22C55E"/>
+  <text x="120" y="160" fill="#F8FAFC" font-size="88" font-family="Arial, sans-serif" font-weight="700">Aurora X</text>
+  <text x="124" y="1030" fill="#BFDBFE" font-size="40" font-family="Arial, sans-serif">Console premium para nova geração</text>
+</svg>

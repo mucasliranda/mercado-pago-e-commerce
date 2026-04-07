@@ -13,12 +13,21 @@ importers:
       "@heroicons/react":
         specifier: ^2.2.0
         version: 2.2.0(react@19.0.0)
+      "@supabase/ssr":
+        specifier: ^0.10.0
+        version: 0.10.0(@supabase/supabase-js@2.101.1)
+      "@supabase/supabase-js":
+        specifier: ^2.101.1
+        version: 2.101.1
       clsx:
         specifier: ^2.1.1
         version: 2.1.1
       geist:
         specifier: ^1.3.1
         version: 1.3.1(next@15.6.0-canary.60(react-dom@19.0.0(react@19.0.0))(react@19.0.0))
+      mercadopago:
+        specifier: ^2.12.0
+        version: 2.12.0
       next:
         specifier: 15.6.0-canary.60
         version: 15.6.0-canary.60(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
@@ -482,6 +491,62 @@ packages:
     peerDependencies:
       react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
 
+  "@supabase/auth-js@2.101.1":
+    resolution:
+      {
+        integrity: sha512-Kd0Wey+RkFHgyVep7adS6UOE2pN6MJ3mZ32PAXSvfw6IjUkFRC7IQpdZZjUOcUe5pXr1ejufCRgF6lsGINe4Tw==,
+      }
+    engines: { node: ">=20.0.0" }
+
+  "@supabase/functions-js@2.101.1":
+    resolution:
+      {
+        integrity: sha512-OZWU7YtaG+NNNFZK8p/FuJ6gpq7pFyrG2fLOopP73HAIDHDGpOttPJapvO8ADu3RkqfQfkwrB354vPkSBbZ20A==,
+      }
+    engines: { node: ">=20.0.0" }
+
+  "@supabase/phoenix@0.4.0":
+    resolution:
+      {
+        integrity: sha512-RHSx8bHS02xwfHdAbX5Lpbo6PXbgyf7lTaXTlwtFDPwOIw64NnVRwFAXGojHhjtVYI+PEPNSWwkL90f4agN3bw==,
+      }
+
+  "@supabase/postgrest-js@2.101.1":
+    resolution:
+      {
+        integrity: sha512-UW1RajH5jbZoK+ldAJ1I6VZ+HWwZ2oaKjEQ6Gn+AQ67CHQVxGl8wNQoLYyumbyaExm41I+wn7arulcY1eHeZJw==,
+      }
+    engines: { node: ">=20.0.0" }
+
+  "@supabase/realtime-js@2.101.1":
+    resolution:
+      {
+        integrity: sha512-Oa6dno0OB9I+hv5do5zsZHbFu41ViZnE9IWjmkeeF/8fPmB5fWoHGqeTYEC3/0DAgtpUoFJa4FpvzFH0SBHo1Q==,
+      }
+    engines: { node: ">=20.0.0" }
+
+  "@supabase/ssr@0.10.0":
+    resolution:
+      {
+        integrity: sha512-36jIu+DuKzg5EgA3fnH+zHvwASvpKcL4zPgmHoZaULroS5Q4mzeHcM69zJ0sXUHddO5IcHjQNZJ9Vyhl/DdbRw==,
+      }
+    peerDependencies:
+      "@supabase/supabase-js": ^2.100.1
+
+  "@supabase/storage-js@2.101.1":
+    resolution:
+      {
+        integrity: sha512-WhTaUOBgeEvnKLy95Cdlp6+D5igSF/65yC727w1olxbet5nzUvMlajKUWyzNtQu2efrz2cQ7FcdVBdQqgT9YKQ==,
+      }
+    engines: { node: ">=20.0.0" }
+
+  "@supabase/supabase-js@2.101.1":
+    resolution:
+      {
+        integrity: sha512-Jnhm3LfuACwjIzvk2pfUbGQn7pa7hi6MFzfSyPrRYWVCCu69RPLCFyHSBl7HSBwadbQ3UZOznnD3gPca3ePrRA==,
+      }
+    engines: { node: ">=20.0.0" }
+
   "@swc/helpers@0.5.15":
     resolution:
       {
@@ -657,6 +722,12 @@ packages:
         integrity: sha512-V6Ar115dBDrjbtXSrS+/Oruobc+qVbbUxDFC1RSbRqLt5SYvxxyIDrSC85RWml54g+jfNeEMZhEj7wW07ONQhA==,
       }
 
+  "@types/ws@8.18.1":
+    resolution:
+      {
+        integrity: sha512-ThVF6DCVhA8kUGy+aazFQ4kXQ7E1Ty7A3ypFOe0IcJV8O/M511G99AW24irKrW56Wt44yG9+ij8FaqoBGkuBXg==,
+      }
+
   caniuse-lite@1.0.30001706:
     resolution:
       {
@@ -675,6 +746,13 @@ packages:
         integrity: sha512-eYm0QWBtUrBWZWG0d386OGAw16Z995PiOVo2B7bjWSbHedGl5e0ZWaq65kOGgUSNesEIDkB9ISbTg/JK9dhCZA==,
       }
     engines: { node: ">=6" }
+
+  cookie@1.1.1:
+    resolution:
+      {
+        integrity: sha512-ei8Aos7ja0weRpFzJnEA9UHJ/7XQmqglbRwnf2ATjcB9Wq874VKH9kfjjirM6UhU2/E5fFYadylyhFldcqSidQ==,
+      }
+    engines: { node: ">=18" }
 
   cssesc@3.0.0:
     resolution:
@@ -724,6 +802,13 @@ packages:
       {
         integrity: sha512-RbJ5/jmFcNNCcDV5o9eTnBLJ/HszWV0P73bc+Ff4nS/rJj+YaS6IGyiOL0VoBYX+l1Wrl3k63h/KrH+nhJ0XvQ==,
       }
+
+  iceberg-js@0.8.1:
+    resolution:
+      {
+        integrity: sha512-1dhVQZXhcHje7798IVM+xoo/1ZdVfzOMIc8/rgVSijRK38EDqOJoGula9N/8ZI5RD8QTxNQtK/Gozpr+qUqRRA==,
+      }
+    engines: { node: ">=20.0.0" }
 
   jiti@2.4.2:
     resolution:
@@ -847,6 +932,12 @@ packages:
         integrity: sha512-0KpjqXRVvrYyCsX1swR/XTK0va6VQkQM6MNo7PqW77ByjAhoARA8EfrP1N4+KlKj8YS0ZUCtRT/YUuhyYDujIQ==,
       }
 
+  mercadopago@2.12.0:
+    resolution:
+      {
+        integrity: sha512-9S+ZB/Fltd4BV9/U79r7U/+LrYJP844kxxvtAlVbbeVmhOE9rZt0YhPy1GXO3Yf4XyQaHwZ/SCyL2kebAicaLw==,
+      }
+
   nanoid@3.3.11:
     resolution:
       {
@@ -877,6 +968,18 @@ packages:
       babel-plugin-react-compiler:
         optional: true
       sass:
+        optional: true
+
+  node-fetch@2.7.0:
+    resolution:
+      {
+        integrity: sha512-c4FRfUm/dbcWZ7U+1Wq0AwCyFL+3nt2bEw05wfxSz+DWpWsitgmSgYmy2dQdWyKC1694ELPqMs/YzUSNozLt8A==,
+      }
+    engines: { node: 4.x || >=6.0.0 }
+    peerDependencies:
+      encoding: ^0.1.0
+    peerDependenciesMeta:
+      encoding:
         optional: true
 
   picocolors@1.1.1:
@@ -1059,6 +1162,12 @@ packages:
       }
     engines: { node: ">=6" }
 
+  tr46@0.0.3:
+    resolution:
+      {
+        integrity: sha512-N3WMsuqV66lT30CrXNbEjx4GEwlow3v6rr4mCcv6prnfwhS01rkgyFdjPNBYd9br7LpXV1+Emh01fHnq2Gdgrw==,
+      }
+
   tslib@2.8.1:
     resolution:
       {
@@ -1084,6 +1193,40 @@ packages:
       {
         integrity: sha512-EPD5q1uXyFxJpCrLnCc1nHnq3gOa6DZBocAIiI2TaSCA7VCJ1UJDMagCzIkXNsUYfD1daK//LTEQ8xiIbrHtcw==,
       }
+
+  uuid@9.0.1:
+    resolution:
+      {
+        integrity: sha512-b+1eJOlsR9K8HJpow9Ok3fiWOWSIcIzXodvv0rQjVoOVNpWMpxf1wZNpt4y9h10odCNrqnYp1OBzRktckBe3sA==,
+      }
+    hasBin: true
+
+  webidl-conversions@3.0.1:
+    resolution:
+      {
+        integrity: sha512-2JAn3z8AR6rjK8Sm8orRC0h/bcl/DqL7tRPdGZ4I1CjdF+EaMLmYxBHyXuKL849eucPFhvBoxMsflfOb8kxaeQ==,
+      }
+
+  whatwg-url@5.0.0:
+    resolution:
+      {
+        integrity: sha512-saE57nupxk6v3HY35+jzBwYa0rKSy0XR8JSxZPwgLr7ys0IBzhGviA1/TUGJLmSVqs8pb9AnvICXEuOHLprYTw==,
+      }
+
+  ws@8.20.0:
+    resolution:
+      {
+        integrity: sha512-sAt8BhgNbzCtgGbt2OxmpuryO63ZoDk/sqaB/znQm94T4fCEsy/yV+7CdC1kJhOU9lboAEU7R3kquuycDoibVA==,
+      }
+    engines: { node: ">=10.0.0" }
+    peerDependencies:
+      bufferutil: ^4.0.1
+      utf-8-validate: ">=5.0.2"
+    peerDependenciesMeta:
+      bufferutil:
+        optional: true
+      utf-8-validate:
+        optional: true
 
 snapshots:
   "@alloc/quick-lru@5.2.0": {}
@@ -1303,6 +1446,51 @@ snapshots:
     dependencies:
       react: 19.0.0
 
+  "@supabase/auth-js@2.101.1":
+    dependencies:
+      tslib: 2.8.1
+
+  "@supabase/functions-js@2.101.1":
+    dependencies:
+      tslib: 2.8.1
+
+  "@supabase/phoenix@0.4.0": {}
+
+  "@supabase/postgrest-js@2.101.1":
+    dependencies:
+      tslib: 2.8.1
+
+  "@supabase/realtime-js@2.101.1":
+    dependencies:
+      "@supabase/phoenix": 0.4.0
+      "@types/ws": 8.18.1
+      tslib: 2.8.1
+      ws: 8.20.0
+    transitivePeerDependencies:
+      - bufferutil
+      - utf-8-validate
+
+  "@supabase/ssr@0.10.0(@supabase/supabase-js@2.101.1)":
+    dependencies:
+      "@supabase/supabase-js": 2.101.1
+      cookie: 1.1.1
+
+  "@supabase/storage-js@2.101.1":
+    dependencies:
+      iceberg-js: 0.8.1
+      tslib: 2.8.1
+
+  "@supabase/supabase-js@2.101.1":
+    dependencies:
+      "@supabase/auth-js": 2.101.1
+      "@supabase/functions-js": 2.101.1
+      "@supabase/postgrest-js": 2.101.1
+      "@supabase/realtime-js": 2.101.1
+      "@supabase/storage-js": 2.101.1
+    transitivePeerDependencies:
+      - bufferutil
+      - utf-8-validate
+
   "@swc/helpers@0.5.15":
     dependencies:
       tslib: 2.8.1
@@ -1401,11 +1589,17 @@ snapshots:
     dependencies:
       csstype: 3.1.3
 
+  "@types/ws@8.18.1":
+    dependencies:
+      "@types/node": 22.13.10
+
   caniuse-lite@1.0.30001706: {}
 
   client-only@0.0.1: {}
 
   clsx@2.1.1: {}
+
+  cookie@1.1.1: {}
 
   cssesc@3.0.0: {}
 
@@ -1426,6 +1620,8 @@ snapshots:
       next: 15.6.0-canary.60(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
 
   graceful-fs@4.2.11: {}
+
+  iceberg-js@0.8.1: {}
 
   jiti@2.4.2: {}
 
@@ -1480,6 +1676,13 @@ snapshots:
 
   lodash.merge@4.6.2: {}
 
+  mercadopago@2.12.0:
+    dependencies:
+      node-fetch: 2.7.0
+      uuid: 9.0.1
+    transitivePeerDependencies:
+      - encoding
+
   nanoid@3.3.11: {}
 
   next@15.6.0-canary.60(react-dom@19.0.0(react@19.0.0))(react@19.0.0):
@@ -1504,6 +1707,10 @@ snapshots:
     transitivePeerDependencies:
       - "@babel/core"
       - babel-plugin-macros
+
+  node-fetch@2.7.0:
+    dependencies:
+      whatwg-url: 5.0.0
 
   picocolors@1.1.1: {}
 
@@ -1592,6 +1799,8 @@ snapshots:
 
   tapable@2.2.1: {}
 
+  tr46@0.0.3: {}
+
   tslib@2.8.1: {}
 
   typescript@5.8.2: {}
@@ -1599,3 +1808,14 @@ snapshots:
   undici-types@6.20.0: {}
 
   util-deprecate@1.0.2: {}
+
+  uuid@9.0.1: {}
+
+  webidl-conversions@3.0.1: {}
+
+  whatwg-url@5.0.0:
+    dependencies:
+      tr46: 0.0.3
+      webidl-conversions: 3.0.1
+
+  ws@8.20.0: {}

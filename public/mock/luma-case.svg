@@ -1,0 +1,12 @@
+<svg width="1200" height="1200" viewBox="0 0 1200 1200" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="1200" height="1200" fill="#111827"/>
+  <rect x="310" y="180" width="580" height="840" rx="80" fill="#020617" stroke="#F59E0B" stroke-width="8"/>
+  <rect x="390" y="280" width="420" height="640" rx="48" fill="#1F2937"/>
+  <rect x="460" y="860" width="280" height="16" rx="8" fill="#FBBF24"/>
+  <path d="M460 360H740" stroke="#FDE68A" stroke-width="12" stroke-linecap="round"/>
+  <path d="M460 430H740" stroke="#FDE68A" stroke-width="12" stroke-linecap="round"/>
+  <path d="M460 500H650" stroke="#FDE68A" stroke-width="12" stroke-linecap="round"/>
+  <circle cx="600" cy="700" r="92" fill="#F59E0B" fill-opacity="0.15" stroke="#FBBF24" stroke-width="8"/>
+  <text x="130" y="150" fill="#FEF3C7" font-size="84" font-family="Arial, sans-serif" font-weight="700">Luma Carry Case</text>
+  <text x="130" y="1030" fill="#FBBF24" font-size="40" font-family="Arial, sans-serif">Case rígido para levar o setup inteiro</text>
+</svg>

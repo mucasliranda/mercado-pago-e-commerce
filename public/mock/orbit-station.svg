@@ -1,0 +1,11 @@
+<svg width="1200" height="1200" viewBox="0 0 1200 1200" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="1200" height="1200" fill="#030712"/>
+  <circle cx="600" cy="600" r="290" fill="#111827" stroke="#A78BFA" stroke-width="8"/>
+  <circle cx="600" cy="600" r="180" fill="#1F2937"/>
+  <circle cx="600" cy="600" r="82" fill="#C4B5FD"/>
+  <path d="M240 600C240 450 402 330 600 330C798 330 960 450 960 600C960 750 798 870 600 870C402 870 240 750 240 600Z" stroke="#8B5CF6" stroke-width="18"/>
+  <path d="M330 450L870 750" stroke="#E9D5FF" stroke-width="8" stroke-linecap="round"/>
+  <path d="M330 750L870 450" stroke="#E9D5FF" stroke-width="8" stroke-linecap="round"/>
+  <text x="120" y="150" fill="#F5F3FF" font-size="84" font-family="Arial, sans-serif" font-weight="700">Orbit Charging Station</text>
+  <text x="130" y="1030" fill="#C4B5FD" font-size="40" font-family="Arial, sans-serif">Base magnética para dois controles</text>
+</svg>

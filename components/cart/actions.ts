@@ -3,18 +3,41 @@
 import { TAGS } from "lib/constants";
 import {
   addToCart,
+  createMercadoPagoCheckout,
   createCart,
   getCart,
   removeFromCart,
   updateCart,
 } from "lib/shopify";
+import { createClient } from "lib/supabase/server";
 import { updateTag } from "next/cache";
-import { cookies } from "next/headers";
+import { cookies, headers } from "next/headers";
 import { redirect } from "next/navigation";
+
+function getCheckoutLoginRedirect(referer: string | null) {
+  const fallbackPath = "/";
+
+  if (!referer) {
+    return "/login?message=Entre+para+continuar+com+a+compra.&next=%2F";
+  }
+
+  try {
+    const refererUrl = new URL(referer);
+    const nextPath = `${refererUrl.pathname}${refererUrl.search}`;
+    const params = new URLSearchParams({
+      message: "Entre para continuar com a compra.",
+      next: nextPath || fallbackPath,
+    });
+
+    return `/login?${params.toString()}`;
+  } catch {
+    return "/login?message=Entre+para+continuar+com+a+compra.&next=%2F";
+  }
+}
 
 export async function addItem(
   prevState: any,
-  selectedVariantId: string | undefined
+  selectedVariantId: string | undefined,
 ) {
   if (!selectedVariantId) {
     return "Error adding item to cart";
@@ -37,7 +60,7 @@ export async function removeItem(prevState: any, merchandiseId: string) {
     }
 
     const lineItem = cart.lines.find(
-      (line) => line.merchandise.id === merchandiseId
+      (line) => line.merchandise.id === merchandiseId,
     );
 
     if (lineItem && lineItem.id) {
@@ -56,7 +79,7 @@ export async function updateItemQuantity(
   payload: {
     merchandiseId: string;
     quantity: number;
-  }
+  },
 ) {
   const { merchandiseId, quantity } = payload;
 
@@ -68,7 +91,7 @@ export async function updateItemQuantity(
     }
 
     const lineItem = cart.lines.find(
-      (line) => line.merchandise.id === merchandiseId
+      (line) => line.merchandise.id === merchandiseId,
     );
 
     if (lineItem && lineItem.id) {
@@ -96,11 +119,26 @@ export async function updateItemQuantity(
 }
 
 export async function redirectToCheckout() {
-  let cart = await getCart();
-  redirect(cart!.checkoutUrl);
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (!user) {
+    redirect(getCheckoutLoginRedirect((await headers()).get("referer")));
+  }
+
+  const cart = await getCart();
+
+  if (!cart || cart.lines.length === 0) {
+    redirect("/search");
+  }
+
+  const checkout = await createMercadoPagoCheckout(cart);
+  redirect(checkout.url);
 }
 
 export async function createCartAndSetCookie() {
-  let cart = await createCart();
+  const cart = await createCart();
   (await cookies()).set("cartId", cart.id!);
 }

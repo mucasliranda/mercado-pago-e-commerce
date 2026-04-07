@@ -19,6 +19,8 @@
 # misc
 .DS_Store
 *.pem
+.agents/
+.cursor/
 
 # debug
 npm-debug.log*
@@ -37,3 +39,5 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 .env*.local
+
+.vercel
