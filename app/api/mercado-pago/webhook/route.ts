@@ -5,6 +5,9 @@ async function parseMercadoPagoWebhook(req: NextRequest) {
   const queryPayload = Object.fromEntries(req.nextUrl.searchParams.entries());
   const rawBody = await req.text();
 
+  console.log("queryPayload", queryPayload);
+  console.log("rawBody", rawBody);
+
   if (!rawBody.trim()) {
     return normalizeMercadoPagoWebhookPayload(queryPayload);
   }
