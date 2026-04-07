@@ -1,6 +1,7 @@
 "use server";
 
 import { TAGS } from "lib/constants";
+import { getTranslations } from "lib/i18n/server";
 import {
   addToCart,
   createMercadoPagoCheckout,
@@ -14,24 +15,24 @@ import { updateTag } from "next/cache";
 import { cookies, headers } from "next/headers";
 import { redirect } from "next/navigation";
 
-function getCheckoutLoginRedirect(referer: string | null) {
+function getCheckoutLoginRedirect(referer: string | null, message: string) {
   const fallbackPath = "/";
 
   if (!referer) {
-    return "/login?message=Entre+para+continuar+com+a+compra.&next=%2F";
+    return `/login?message=${encodeURIComponent(message)}&next=%2F`;
   }
 
   try {
     const refererUrl = new URL(referer);
     const nextPath = `${refererUrl.pathname}${refererUrl.search}`;
     const params = new URLSearchParams({
-      message: "Entre para continuar com a compra.",
+      message,
       next: nextPath || fallbackPath,
     });
 
     return `/login?${params.toString()}`;
   } catch {
-    return "/login?message=Entre+para+continuar+com+a+compra.&next=%2F";
+    return `/login?message=${encodeURIComponent(message)}&next=%2F`;
   }
 }
 
@@ -39,24 +40,28 @@ export async function addItem(
   prevState: any,
   selectedVariantId: string | undefined,
 ) {
+  const { t } = await getTranslations();
+
   if (!selectedVariantId) {
-    return "Error adding item to cart";
+    return t("cart.errors.add");
   }
 
   try {
     await addToCart([{ merchandiseId: selectedVariantId, quantity: 1 }]);
     updateTag(TAGS.cart);
   } catch (e) {
-    return "Error adding item to cart";
+    return t("cart.errors.add");
   }
 }
 
 export async function removeItem(prevState: any, merchandiseId: string) {
+  const { t } = await getTranslations();
+
   try {
     const cart = await getCart();
 
     if (!cart) {
-      return "Error fetching cart";
+      return t("cart.errors.fetch");
     }
 
     const lineItem = cart.lines.find(
@@ -67,10 +72,10 @@ export async function removeItem(prevState: any, merchandiseId: string) {
       await removeFromCart([lineItem.id]);
       updateTag(TAGS.cart);
     } else {
-      return "Item not found in cart";
+      return t("cart.errors.itemNotFound");
     }
   } catch (e) {
-    return "Error removing item from cart";
+    return t("cart.errors.remove");
   }
 }
 
@@ -81,13 +86,14 @@ export async function updateItemQuantity(
     quantity: number;
   },
 ) {
+  const { t } = await getTranslations();
   const { merchandiseId, quantity } = payload;
 
   try {
     const cart = await getCart();
 
     if (!cart) {
-      return "Error fetching cart";
+      return t("cart.errors.fetch");
     }
 
     const lineItem = cart.lines.find(
@@ -114,18 +120,24 @@ export async function updateItemQuantity(
     updateTag(TAGS.cart);
   } catch (e) {
     console.error(e);
-    return "Error updating item quantity";
+    return t("cart.errors.update");
   }
 }
 
 export async function redirectToCheckout() {
+  const { t } = await getTranslations();
   const supabase = await createClient();
   const {
     data: { user },
   } = await supabase.auth.getUser();
 
   if (!user) {
-    redirect(getCheckoutLoginRedirect((await headers()).get("referer")));
+    redirect(
+      getCheckoutLoginRedirect(
+        (await headers()).get("referer"),
+        t("auth.validation.continueCheckout"),
+      ),
+    );
   }
 
   const cart = await getCart();

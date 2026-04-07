@@ -1,14 +1,17 @@
 "use client";
 
+import { useTranslations } from "components/i18n-provider";
 import { useEffect } from "react";
 import { toast } from "sonner";
 
 export function WelcomeToast() {
+  const { t } = useTranslations();
+
   useEffect(() => {
-    // ignore if screen height is too small
     if (window.innerHeight < 650) return;
+
     if (!document.cookie.includes("welcome-toast=2")) {
-      toast("🛍️ Welcome to Next.js Commerce!", {
+      toast(t("welcomeToast.title"), {
         id: "welcome-toast",
         duration: Infinity,
         onDismiss: () => {
@@ -16,21 +19,20 @@ export function WelcomeToast() {
         },
         description: (
           <>
-            This is a high-performance, SSR storefront powered by Shopify,
-            Next.js, and Vercel.{" "}
+            {t("welcomeToast.description")}{" "}
             <a
               href="https://vercel.com/templates/next.js/nextjs-commerce"
               className="text-blue-600 hover:underline"
               target="_blank"
             >
-              Deploy your own
+              {t("welcomeToast.cta")}
             </a>
             .
           </>
         ),
       });
     }
-  }, []);
+  }, [t]);
 
   return null;
 }

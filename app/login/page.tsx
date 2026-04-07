@@ -6,12 +6,15 @@ import {
   AuthShell,
 } from "components/auth/auth-shell";
 import { SubmitButton } from "components/auth/submit-button";
+import { getTranslations } from "lib/i18n/server";
 import { createClient } from "lib/supabase/server";
+import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 
-export const metadata = {
-  title: "Entrar",
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const { t } = await getTranslations();
+  return { title: t("auth.login.metadataTitle") };
+}
 
 export default async function LoginPage({
   searchParams,
@@ -25,6 +28,7 @@ export default async function LoginPage({
   const {
     data: { user },
   } = await supabase.auth.getUser();
+  const { t } = await getTranslations();
 
   if (user) {
     redirect(next || "/");
@@ -32,14 +36,14 @@ export default async function LoginPage({
 
   return (
     <AuthShell
-      eyebrow="Login"
-      title="Entre para salvar sua jornada de compra."
-      description="Use email e senha para acessar sua conta, revisar seu perfil e deixar o fluxo da loja pronto para os proximos passos."
+      eyebrow={t("auth.login.eyebrow")}
+      title={t("auth.login.title")}
+      description={t("auth.login.description")}
       footer={
         <AuthFooterLink
           href={next ? `/signup?next=${encodeURIComponent(next)}` : "/signup"}
-          label="Ainda nao tem conta?"
-          action="Criar agora"
+          label={t("auth.login.noAccount")}
+          action={t("auth.login.createNow")}
         />
       }
     >
@@ -47,29 +51,31 @@ export default async function LoginPage({
         <input type="hidden" name="next" value={next || ""} />
         <div className="space-y-1">
           <h2 className="text-2xl font-medium text-black dark:text-white">
-            Bem-vindo de volta
+            {t("auth.login.heading")}
           </h2>
           <p className="text-sm text-neutral-500 dark:text-neutral-400">
-            Acesse com as mesmas credenciais que voce vai usar para acompanhar
-            sua conta.
+            {t("auth.login.subtitle")}
           </p>
         </div>
         <AuthMessage message={message} />
         <div className="grid gap-4">
           <AuthField
-            label="Email"
+            label={t("common.labels.email")}
             name="email"
             type="email"
-            placeholder="voce@aurora.store"
+            placeholder={t("auth.login.emailPlaceholder")}
           />
           <AuthField
-            label="Senha"
+            label={t("common.labels.password")}
             name="password"
             type="password"
-            placeholder="Sua senha"
+            placeholder={t("auth.login.passwordPlaceholder")}
           />
         </div>
-        <SubmitButton idleLabel="Entrar" pendingLabel="Entrando..." />
+        <SubmitButton
+          idleLabel={t("auth.login.submit")}
+          pendingLabel={t("auth.login.pending")}
+        />
       </form>
     </AuthShell>
   );

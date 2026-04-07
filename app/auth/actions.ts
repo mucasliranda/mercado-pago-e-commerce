@@ -1,5 +1,6 @@
 "use server";
 
+import { getTranslations } from "lib/i18n/server";
 import { createClient } from "lib/supabase/server";
 import { baseUrl } from "lib/utils";
 import { redirect } from "next/navigation";
@@ -20,24 +21,27 @@ function getField(formData: FormData, key: string) {
 }
 
 function validateCredentials(email: string, password: string) {
-  const errors: string[] = [];
+  return getTranslations().then(({ t }) => {
+    const errors: string[] = [];
 
-  if (!email || !email.includes("@")) {
-    errors.push("Informe um email valido.");
-  }
+    if (!email || !email.includes("@")) {
+      errors.push(t("auth.validation.invalidEmail"));
+    }
 
-  if (!password || password.length < 8) {
-    errors.push("A senha precisa ter pelo menos 8 caracteres.");
-  }
+    if (!password || password.length < 8) {
+      errors.push(t("auth.validation.shortPassword"));
+    }
 
-  return errors;
+    return errors;
+  });
 }
 
 export async function login(formData: FormData) {
+  const { t } = await getTranslations();
   const email = getField(formData, "email");
   const password = getField(formData, "password");
   const next = getField(formData, "next");
-  const errors = validateCredentials(email, password);
+  const errors = await validateCredentials(email, password);
 
   if (errors.length) {
     redirect(createAuthRedirect("/login", errors[0]!, next));
@@ -53,7 +57,7 @@ export async function login(formData: FormData) {
     redirect(
       createAuthRedirect(
         "/login",
-        "Nao foi possivel entrar com esses dados.",
+        t("auth.validation.invalidLogin"),
         next,
       ),
     );
@@ -63,14 +67,15 @@ export async function login(formData: FormData) {
 }
 
 export async function signup(formData: FormData) {
+  const { t } = await getTranslations();
   const email = getField(formData, "email");
   const password = getField(formData, "password");
   const confirmPassword = getField(formData, "confirmPassword");
   const next = getField(formData, "next");
-  const errors = validateCredentials(email, password);
+  const errors = await validateCredentials(email, password);
 
   if (password !== confirmPassword) {
-    errors.push("As senhas precisam ser iguais.");
+    errors.push(t("auth.validation.passwordMismatch"));
   }
 
   if (errors.length) {
@@ -90,7 +95,7 @@ export async function signup(formData: FormData) {
     redirect(
       createAuthRedirect(
         "/signup",
-        "Nao foi possivel criar a sua conta.",
+        t("auth.validation.signupFailed"),
         next,
       ),
     );
@@ -100,7 +105,7 @@ export async function signup(formData: FormData) {
     redirect(
       createAuthRedirect(
         "/login",
-        "Conta criada. Confira seu email para confirmar o acesso.",
+        t("auth.validation.accountCreated"),
         next,
       ),
     );

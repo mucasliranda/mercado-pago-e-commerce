@@ -3,6 +3,7 @@ import Footer from "components/layout/footer";
 import { Gallery } from "components/product/gallery";
 import { ProductDescription } from "components/product/product-description";
 import { HIDDEN_PRODUCT_TAG } from "lib/constants";
+import { getTranslations } from "lib/i18n/server";
 import { getProduct, getProductRecommendations } from "lib/shopify";
 import type { Image } from "lib/shopify/types";
 import type { Metadata } from "next";
@@ -111,13 +112,16 @@ export default async function ProductPage(props: {
 }
 
 async function RelatedProducts({ id }: { id: string }) {
+  const { t } = await getTranslations();
   const relatedProducts = await getProductRecommendations(id);
 
   if (!relatedProducts.length) return null;
 
   return (
     <div className="py-8">
-      <h2 className="mb-4 text-2xl font-bold">Related Products</h2>
+      <h2 className="mb-4 text-2xl font-bold">
+        {t("product.relatedProducts")}
+      </h2>
       <ul className="flex w-full gap-4 overflow-x-auto pt-1">
         {relatedProducts.map((product) => (
           <li

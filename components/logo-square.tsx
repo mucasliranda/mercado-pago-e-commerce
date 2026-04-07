@@ -1,7 +1,14 @@
 import clsx from "clsx";
+import { getTranslations } from "lib/i18n/server";
 import LogoIcon from "./icons/logo";
 
-export default function LogoSquare({ size }: { size?: "sm" | undefined }) {
+export default async function LogoSquare({
+  size,
+}: {
+  size?: "sm" | undefined;
+}) {
+  const { t } = await getTranslations();
+
   return (
     <div
       className={clsx(
@@ -13,6 +20,7 @@ export default function LogoSquare({ size }: { size?: "sm" | undefined }) {
       )}
     >
       <LogoIcon
+        label={`${process.env.SITE_NAME} ${t("site.logoLabel")}`}
         className={clsx({
           "h-[16px] w-[16px]": !size,
           "h-[10px] w-[10px]": size === "sm",

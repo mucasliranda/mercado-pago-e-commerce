@@ -1,3 +1,9 @@
+import {
+  createTranslator,
+  defaultLocale,
+  type Locale,
+} from "lib/i18n";
+
 export type SortFilterItem = {
   title: string;
   slug: string | null;
@@ -5,40 +11,48 @@ export type SortFilterItem = {
   reverse: boolean;
 };
 
-export const defaultSort: SortFilterItem = {
-  title: "Relevance",
-  slug: null,
-  sortKey: "RELEVANCE",
-  reverse: false,
-};
+export function getDefaultSort(locale: Locale = defaultLocale): SortFilterItem {
+  const { t } = createTranslator(locale);
 
-export const sorting: SortFilterItem[] = [
-  defaultSort,
-  {
-    title: "Trending",
-    slug: "trending-desc",
-    sortKey: "BEST_SELLING",
+  return {
+    title: t("search.sorting.relevance"),
+    slug: null,
+    sortKey: "RELEVANCE",
     reverse: false,
-  }, // asc
-  {
-    title: "Latest arrivals",
-    slug: "latest-desc",
-    sortKey: "CREATED_AT",
-    reverse: true,
-  },
-  {
-    title: "Price: Low to high",
-    slug: "price-asc",
-    sortKey: "PRICE",
-    reverse: false,
-  }, // asc
-  {
-    title: "Price: High to low",
-    slug: "price-desc",
-    sortKey: "PRICE",
-    reverse: true,
-  },
-];
+  };
+}
+
+export function getSorting(locale: Locale = defaultLocale): SortFilterItem[] {
+  const { t } = createTranslator(locale);
+
+  return [
+    getDefaultSort(locale),
+    {
+      title: t("search.sorting.trending"),
+      slug: "trending-desc",
+      sortKey: "BEST_SELLING",
+      reverse: false,
+    },
+    {
+      title: t("search.sorting.latest"),
+      slug: "latest-desc",
+      sortKey: "CREATED_AT",
+      reverse: true,
+    },
+    {
+      title: t("search.sorting.priceLowToHigh"),
+      slug: "price-asc",
+      sortKey: "PRICE",
+      reverse: false,
+    },
+    {
+      title: t("search.sorting.priceHighToLow"),
+      slug: "price-desc",
+      sortKey: "PRICE",
+      reverse: true,
+    },
+  ];
+}
 
 export const TAGS = {
   collections: "collections",

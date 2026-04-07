@@ -1,7 +1,8 @@
 import Link from "next/link";
 import { ReactNode } from "react";
+import { getTranslations } from "lib/i18n/server";
 
-export function AuthShell({
+export async function AuthShell({
   eyebrow,
   title,
   description,
@@ -14,6 +15,8 @@ export function AuthShell({
   footer: ReactNode;
   children: ReactNode;
 }) {
+  const { t } = await getTranslations();
+
   return (
     <div className="mx-auto grid min-h-[calc(100vh-80px)] w-full max-w-6xl gap-8 px-4 py-10 md:grid-cols-[1.1fr_0.9fr] md:px-6 lg:px-8">
       <section className="relative overflow-hidden rounded-[2rem] border border-neutral-200 bg-white p-8 shadow-[0_30px_80px_-40px_rgba(0,0,0,0.25)] dark:border-neutral-800 dark:bg-neutral-950">
@@ -35,7 +38,7 @@ export function AuthShell({
           <div className="grid gap-3 text-sm text-neutral-500 dark:text-neutral-400">
             <div className="flex items-center gap-3 text-xs uppercase tracking-[0.22em] text-neutral-400 dark:text-neutral-500">
               <span className="h-px flex-1 bg-neutral-200 dark:bg-neutral-800" />
-              Aurora Store Access
+              {t("site.authAccess")}
               <span className="h-px flex-1 bg-neutral-200 dark:bg-neutral-800" />
             </div>
           </div>

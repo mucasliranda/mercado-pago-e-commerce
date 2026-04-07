@@ -1,10 +1,13 @@
 import clsx from "clsx";
 
-export default function LogoIcon(props: React.ComponentProps<"svg">) {
+export default function LogoIcon({
+  label,
+  ...props
+}: React.ComponentProps<"svg"> & { label: string }) {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
-      aria-label={`${process.env.SITE_NAME} logo`}
+      aria-label={label}
       viewBox="0 0 32 28"
       {...props}
       className={clsx("h-4 w-4 fill-black dark:fill-white", props.className)}

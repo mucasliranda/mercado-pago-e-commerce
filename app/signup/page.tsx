@@ -6,12 +6,15 @@ import {
   AuthShell,
 } from "components/auth/auth-shell";
 import { SubmitButton } from "components/auth/submit-button";
+import { getTranslations } from "lib/i18n/server";
 import { createClient } from "lib/supabase/server";
+import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 
-export const metadata = {
-  title: "Criar conta",
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const { t } = await getTranslations();
+  return { title: t("auth.signup.metadataTitle") };
+}
 
 export default async function SignupPage({
   searchParams,
@@ -25,6 +28,7 @@ export default async function SignupPage({
   const {
     data: { user },
   } = await supabase.auth.getUser();
+  const { t } = await getTranslations();
 
   if (user) {
     redirect(next || "/");
@@ -32,14 +36,14 @@ export default async function SignupPage({
 
   return (
     <AuthShell
-      eyebrow="Cadastro"
-      title="Crie sua conta sem sair do ritmo da vitrine."
-      description="O cadastro usa email e senha e respeita a mesma linguagem limpa da storefront. Se a confirmacao por email estiver ativa no Supabase, a rota de confirmacao ja esta pronta."
+      eyebrow={t("auth.signup.eyebrow")}
+      title={t("auth.signup.title")}
+      description={t("auth.signup.description")}
       footer={
         <AuthFooterLink
           href={next ? `/login?next=${encodeURIComponent(next)}` : "/login"}
-          label="Ja possui conta?"
-          action="Entrar"
+          label={t("auth.signup.hasAccount")}
+          action={t("auth.signup.loginAction")}
         />
       }
     >
@@ -47,35 +51,37 @@ export default async function SignupPage({
         <input type="hidden" name="next" value={next || ""} />
         <div className="space-y-1">
           <h2 className="text-2xl font-medium text-black dark:text-white">
-            Abrir nova conta
+            {t("auth.signup.heading")}
           </h2>
           <p className="text-sm text-neutral-500 dark:text-neutral-400">
-            Guarde seus dados para futuras compras e personalize a experiencia
-            da loja.
+            {t("auth.signup.subtitle")}
           </p>
         </div>
         <AuthMessage message={message} />
         <div className="grid gap-4">
           <AuthField
-            label="Email"
+            label={t("common.labels.email")}
             name="email"
             type="email"
-            placeholder="voce@aurora.store"
+            placeholder={t("auth.signup.emailPlaceholder")}
           />
           <AuthField
-            label="Senha"
+            label={t("common.labels.password")}
             name="password"
             type="password"
-            placeholder="Minimo de 8 caracteres"
+            placeholder={t("auth.signup.passwordPlaceholder")}
           />
           <AuthField
-            label="Confirmar senha"
+            label={t("common.labels.confirmPassword")}
             name="confirmPassword"
             type="password"
-            placeholder="Repita a senha"
+            placeholder={t("auth.signup.confirmPasswordPlaceholder")}
           />
         </div>
-        <SubmitButton idleLabel="Criar conta" pendingLabel="Criando conta..." />
+        <SubmitButton
+          idleLabel={t("auth.signup.submit")}
+          pendingLabel={t("auth.signup.pending")}
+        />
       </form>
     </AuthShell>
   );

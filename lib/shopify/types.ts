@@ -125,6 +125,45 @@ export type Page = {
   updatedAt: string;
 };
 
+export type AccountOrderItem = {
+  id: string;
+  quantity: number;
+  unitPrice: Money;
+  lineTotal: Money;
+  product: {
+    id: string;
+    handle: string;
+    title: string;
+    featuredImage: Image;
+  };
+};
+
+export type AccountOrderPayment = {
+  id: string;
+  gateway: string;
+  gatewayPaymentId: string | null;
+  status: string;
+  amount: Money;
+  createdAt: string;
+  updatedAt: string;
+};
+
+export type AccountOrder = {
+  id: string;
+  externalReference: string | null;
+  status: string;
+  paymentStatus: string;
+  totalAmount: Money;
+  customerEmail: string | null;
+  customerName: string | null;
+  checkoutUrl: string | null;
+  mercadoPagoPaymentId: string | null;
+  createdAt: string;
+  updatedAt: string;
+  items: AccountOrderItem[];
+  latestPayment: AccountOrderPayment | null;
+};
+
 export type DatabaseCategoryRow = {
   id: number;
   name: string;

@@ -1,19 +1,22 @@
 import { AuthNav } from "components/auth/auth-nav";
 import CartModal from "components/cart/modal";
 import LogoSquare from "components/logo-square";
+import { getTranslations } from "lib/i18n/server";
 import { getMenu } from "lib/shopify";
 import { Menu } from "lib/shopify/types";
 import { createClient } from "lib/supabase/server";
 import Link from "next/link";
 import { Suspense } from "react";
+import { LanguageSwitcher } from "./language-switcher";
 import MobileMenu from "./mobile-menu";
 import Search, { SearchSkeleton } from "./search";
 
 const { SITE_NAME } = process.env;
 
 export async function Navbar() {
+  const { locale, t } = await getTranslations();
   const [menu, supabase] = await Promise.all([
-    getMenu("next-js-frontend-header-menu"),
+    getMenu("next-js-frontend-header-menu", locale),
     createClient(),
   ]);
   const {
@@ -22,10 +25,10 @@ export async function Navbar() {
   const authMenu = [
     ...menu,
     ...(user
-      ? [{ title: "Minha conta", path: "/account" }]
+      ? [{ title: t("common.actions.myAccount"), path: "/account" }]
       : [
-          { title: "Entrar", path: "/login" },
-          { title: "Criar conta", path: "/signup" },
+          { title: t("common.actions.login"), path: "/login" },
+          { title: t("common.actions.signup"), path: "/signup" },
         ]),
   ];
 
@@ -70,6 +73,7 @@ export async function Navbar() {
           </Suspense>
         </div>
         <div className="flex items-center justify-end gap-3 md:w-1/3">
+          <LanguageSwitcher />
           <AuthNav userEmail={user?.email} />
           <CartModal />
         </div>

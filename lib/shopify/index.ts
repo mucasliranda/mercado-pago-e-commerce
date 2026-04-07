@@ -2,6 +2,11 @@ import "server-only";
 
 import { DEFAULT_OPTION, TAGS } from "lib/constants";
 import {
+  createTranslator,
+  defaultLocale,
+  type Locale,
+} from "lib/i18n";
+import {
   createCheckoutPreference,
   getMercadoPagoMerchantOrder,
   getMercadoPagoPayment,
@@ -21,6 +26,8 @@ import {
 import { cookies, headers } from "next/headers";
 import { NextRequest, NextResponse } from "next/server";
 import {
+  AccountOrder,
+  AccountOrderPayment,
   Cart,
   CartItem,
   Collection,
@@ -67,6 +74,49 @@ type CartItemRecord = DatabaseCartItemRow & {
 
 type CartRecord = DatabaseCartRow & {
   cart_items?: CartItemRecord[] | null;
+};
+
+type AccountOrderProductRecord = Pick<
+  DatabaseProductRow,
+  "id" | "name" | "title" | "slug"
+> & {
+  product_images?: DatabaseProductImageRow[] | null;
+};
+
+type AccountOrderItemRecord = {
+  id: number;
+  product_id: number;
+  quantity: number;
+  unit_price: string | number;
+  line_total: string | number;
+  products?: AccountOrderProductRecord | AccountOrderProductRecord[] | null;
+};
+
+type AccountOrderRecord = {
+  id: number;
+  external_reference: string | null;
+  status: string;
+  payment_status: string;
+  total_amount: string | number;
+  currency: string;
+  customer_email: string | null;
+  customer_name: string | null;
+  checkout_url: string | null;
+  mercadopago_payment_id: string | null;
+  created_at: string;
+  updated_at: string;
+  order_items?: AccountOrderItemRecord[] | null;
+};
+
+type AccountPaymentRecord = {
+  id: number;
+  order_id: number;
+  gateway: string;
+  gateway_payment_id: string | null;
+  status: string;
+  amount: string | number;
+  created_at: string;
+  updated_at: string;
 };
 
 function toAmountString(value: number | string | null | undefined) {
@@ -176,33 +226,46 @@ function reshapePage(page: PageRecord): Page {
   };
 }
 
-function reshapeCategory(category: DatabaseCategoryRow): Collection {
+function reshapeCategory(
+  category: DatabaseCategoryRow,
+  locale: Locale = defaultLocale,
+): Collection {
+  const { t } = createTranslator(locale);
+
   return {
     handle: category.slug,
     title: category.name,
-    description: `${category.name} products`,
+    description: t("seo.searchFallbackCollectionDescription", {
+      collectionName: category.name,
+    }),
     seo: {
       title: category.name,
-      description: `${category.name} products`,
+      description: t("seo.searchFallbackCollectionDescription", {
+        collectionName: category.name,
+      }),
     },
     updatedAt: category.created_at,
     path: `/search/${category.slug}`,
   };
 }
 
-function createFallbackMenu(handle: string): Menu[] {
+function createFallbackMenu(
+  handle: string,
+  locale: Locale = defaultLocale,
+): Menu[] {
+  const { t } = createTranslator(locale);
   const normalizedHandle = normalizeMenuHandle(handle);
 
   if (normalizedHandle === "footer-menu") {
     return [
-      { title: "Catalogo", path: "/search" },
-      { title: "Sobre", path: "/sobre" },
+      { title: t("menu.catalog"), path: "/search" },
+      { title: t("menu.about"), path: "/sobre" },
     ];
   }
 
   return [
-    { title: "Catalogo", path: "/search" },
-    { title: "Sobre", path: "/sobre" },
+    { title: t("menu.catalog"), path: "/search" },
+    { title: t("menu.about"), path: "/sobre" },
   ];
 }
 
@@ -406,6 +469,167 @@ function reshapeCart(cart: CartRecord): Cart {
       },
     },
   };
+}
+
+function reshapeAccountOrderItem(
+  item: AccountOrderItemRecord,
+  currency: string,
+): AccountOrder["items"][number] {
+  const product = Array.isArray(item.products)
+    ? item.products[0]
+    : item.products;
+  const title = product?.title || product?.name || `Produto ${item.product_id}`;
+  const featuredImage = normalizeImage(
+    product?.product_images?.find((image) => image.is_featured) ||
+      product?.product_images?.[0],
+    title,
+  );
+
+  return {
+    id: item.id.toString(),
+    quantity: item.quantity,
+    unitPrice: {
+      amount: toAmountString(item.unit_price),
+      currencyCode: currency,
+    },
+    lineTotal: {
+      amount: toAmountString(item.line_total),
+      currencyCode: currency,
+    },
+    product: {
+      id: item.product_id.toString(),
+      handle: product?.slug || "",
+      title,
+      featuredImage,
+    },
+  };
+}
+
+function reshapeAccountPayment(
+  payment: AccountPaymentRecord,
+  currency: string,
+): AccountOrderPayment {
+  return {
+    id: payment.id.toString(),
+    gateway: payment.gateway,
+    gatewayPaymentId: payment.gateway_payment_id,
+    status: payment.status,
+    amount: {
+      amount: toAmountString(payment.amount),
+      currencyCode: currency,
+    },
+    createdAt: payment.created_at,
+    updatedAt: payment.updated_at,
+  };
+}
+
+export async function getAccountOrders(userId: string): Promise<AccountOrder[]> {
+  requireSupabaseServiceRoleKey();
+  const { data: orders, error: orderError } = await supabaseAdmin()
+    .from("orders")
+    .select(
+      `
+        id,
+        external_reference,
+        status,
+        payment_status,
+        total_amount,
+        currency,
+        customer_email,
+        customer_name,
+        checkout_url,
+        mercadopago_payment_id,
+        created_at,
+        updated_at,
+        order_items (
+          id,
+          product_id,
+          quantity,
+          unit_price,
+          line_total,
+          products (
+            id,
+            name,
+            title,
+            slug,
+            product_images (
+              id,
+              product_id,
+              image_url,
+              alt_text,
+              position,
+              bucket,
+              storage_path,
+              width,
+              height,
+              is_featured,
+              created_at
+            )
+          )
+        )
+      `,
+    )
+    .eq("user_id", userId)
+    .order("created_at", { ascending: false });
+
+  if (orderError) {
+    throw orderError;
+  }
+
+  const orderRows = (orders || []) as unknown as AccountOrderRecord[];
+
+  if (!orderRows.length) {
+    return [];
+  }
+
+  const orderIds = orderRows.map((order) => order.id);
+  const { data: payments, error: paymentError } = await supabaseAdmin()
+    .from("payments")
+    .select(
+      "id, order_id, gateway, gateway_payment_id, status, amount, created_at, updated_at",
+    )
+    .in("order_id", orderIds)
+    .order("created_at", { ascending: false });
+
+  if (paymentError) {
+    throw paymentError;
+  }
+
+  const latestPaymentsByOrder = new Map<number, AccountPaymentRecord>();
+
+  for (const payment of (payments || []) as AccountPaymentRecord[]) {
+    if (!latestPaymentsByOrder.has(payment.order_id)) {
+      latestPaymentsByOrder.set(payment.order_id, payment);
+    }
+  }
+
+  return orderRows.map((order) => {
+    const currency = order.currency.trim() || "BRL";
+    const latestPayment = latestPaymentsByOrder.get(order.id);
+
+    return {
+      id: order.id.toString(),
+      externalReference: order.external_reference,
+      status: order.status,
+      paymentStatus: order.payment_status,
+      totalAmount: {
+        amount: toAmountString(order.total_amount),
+        currencyCode: currency,
+      },
+      customerEmail: order.customer_email,
+      customerName: order.customer_name,
+      checkoutUrl: order.checkout_url,
+      mercadoPagoPaymentId: order.mercadopago_payment_id,
+      createdAt: order.created_at,
+      updatedAt: order.updated_at,
+      items: (order.order_items || []).map((item) =>
+        reshapeAccountOrderItem(item, currency),
+      ),
+      latestPayment: latestPayment
+        ? reshapeAccountPayment(latestPayment, currency)
+        : null,
+    };
+  });
 }
 
 async function fetchProducts({
@@ -887,6 +1111,7 @@ export async function getCart(): Promise<Cart | undefined> {
 
 export async function getCollection(
   handle: string,
+  locale: Locale = defaultLocale,
 ): Promise<Collection | undefined> {
   "use cache";
   cacheTag(TAGS.collections);
@@ -902,7 +1127,7 @@ export async function getCollection(
     throw error;
   }
 
-  return data ? reshapeCategory(data as DatabaseCategoryRow) : undefined;
+  return data ? reshapeCategory(data as DatabaseCategoryRow, locale) : undefined;
 }
 
 export async function getCollectionProducts({
@@ -952,10 +1177,13 @@ export async function getCollectionProducts({
   return (reverse ? sorted.reverse() : sorted).map(reshapeProduct);
 }
 
-export async function getCollections(): Promise<Collection[]> {
+export async function getCollections(
+  locale: Locale = defaultLocale,
+): Promise<Collection[]> {
   "use cache";
   cacheTag(TAGS.collections);
   cacheLife("days");
+  const { t } = createTranslator(locale);
 
   const { data, error } = await supabaseAdmin()
     .from("categories")
@@ -969,20 +1197,25 @@ export async function getCollections(): Promise<Collection[]> {
   return [
     {
       handle: "",
-      title: "All",
-      description: "All products",
+      title: t("search.allProductsTitle"),
+      description: t("search.allProductsDescription"),
       seo: {
-        title: "All",
-        description: "All products",
+        title: t("search.allProductsTitle"),
+        description: t("search.allProductsDescription"),
       },
       path: "/search",
       updatedAt: new Date().toISOString(),
     },
-    ...((data || []) as DatabaseCategoryRow[]).map(reshapeCategory),
+    ...((data || []) as DatabaseCategoryRow[]).map((category) =>
+      reshapeCategory(category, locale),
+    ),
   ];
 }
 
-export async function getMenu(handle: string): Promise<Menu[]> {
+export async function getMenu(
+  handle: string,
+  locale: Locale = defaultLocale,
+): Promise<Menu[]> {
   "use cache";
   cacheTag(TAGS.collections);
   cacheLife("days");
@@ -1020,7 +1253,7 @@ export async function getMenu(handle: string): Promise<Menu[]> {
       path: item.path,
     }));
 
-  return items.length ? items : createFallbackMenu(handle);
+  return items.length ? items : createFallbackMenu(handle, locale);
 }
 
 export async function getPage(handle: string): Promise<Page> {
@@ -1484,7 +1717,23 @@ export async function persistMercadoPagoWebhook(
         });
 
       if (paymentInsertError) {
-        throw paymentInsertError;
+        if (paymentInsertError.code !== "23505") {
+          throw paymentInsertError;
+        }
+
+        const { error: concurrentPaymentUpdateError } = await supabaseAdmin()
+          .from("payments")
+          .update({
+            order_id: order.id,
+            status: paymentRowStatus,
+            amount: Math.max(amount, 0),
+            raw_payload: normalizedPayload as Json,
+          })
+          .eq("gateway_payment_id", gatewayPaymentId);
+
+        if (concurrentPaymentUpdateError) {
+          throw concurrentPaymentUpdateError;
+        }
       }
     }
   }

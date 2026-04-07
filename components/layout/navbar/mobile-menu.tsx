@@ -6,10 +6,12 @@ import { usePathname, useSearchParams } from "next/navigation";
 import { Fragment, Suspense, useEffect, useState } from "react";
 
 import { Bars3Icon, XMarkIcon } from "@heroicons/react/24/outline";
+import { useTranslations } from "components/i18n-provider";
 import { Menu } from "lib/shopify/types";
 import Search, { SearchSkeleton } from "./search";
 
 export default function MobileMenu({ menu }: { menu: Menu[] }) {
+  const { t } = useTranslations();
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const [isOpen, setIsOpen] = useState(false);
@@ -34,7 +36,7 @@ export default function MobileMenu({ menu }: { menu: Menu[] }) {
     <>
       <button
         onClick={openMobileMenu}
-        aria-label="Open mobile menu"
+        aria-label={t("common.actions.open")}
         className="flex h-11 w-11 items-center justify-center rounded-md border border-neutral-200 text-black transition-colors md:hidden dark:border-neutral-700 dark:text-white"
       >
         <Bars3Icon className="h-4" />
@@ -66,7 +68,7 @@ export default function MobileMenu({ menu }: { menu: Menu[] }) {
                 <button
                   className="mb-4 flex h-11 w-11 items-center justify-center rounded-md border border-neutral-200 text-black transition-colors dark:border-neutral-700 dark:text-white"
                   onClick={closeMobileMenu}
-                  aria-label="Close mobile menu"
+                  aria-label={t("common.actions.close")}
                 >
                   <XMarkIcon className="h-6" />
                 </button>
