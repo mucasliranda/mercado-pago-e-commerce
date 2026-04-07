@@ -1,6 +1,7 @@
-import { Carousel } from "components/carousel";
-import { ThreeItemGrid } from "components/grid/three-items";
-import Footer from "components/layout/footer";
+// import { Carousel } from "components/carousel";
+// import { ThreeItemGrid } from "components/grid/three-items";
+// import Footer from "components/layout/footer";
+import { redirect } from "next/navigation";
 
 export const metadata = {
   description:
@@ -11,11 +12,12 @@ export const metadata = {
 };
 
 export default function HomePage() {
-  return (
-    <>
-      <ThreeItemGrid />
-      <Carousel />
-      <Footer />
-    </>
-  );
+  redirect("/search");
+  // return (
+  //   <>
+  //     <ThreeItemGrid />
+  //     <Carousel />
+  //     <Footer />
+  //   </>
+  // );
 }
