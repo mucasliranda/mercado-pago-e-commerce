@@ -1,8 +1,8 @@
 "use client";
 
-import clsx from "clsx";
 import { Dialog, Transition } from "@headlessui/react";
 import { ShoppingCartIcon, XMarkIcon } from "@heroicons/react/24/outline";
+import clsx from "clsx";
 import { useTranslations } from "components/i18n-provider";
 import LoadingDots from "components/loading-dots";
 import Price from "components/price";
@@ -196,20 +196,6 @@ export default function CartModal() {
                       })}
                   </ul>
                   <div className="py-4 text-sm text-neutral-500 dark:text-neutral-400">
-                    <div className="mb-3 flex items-center justify-between border-b border-neutral-200 pb-1 dark:border-neutral-700">
-                      <p>{t("cart.taxes")}</p>
-                      <Price
-                        className="text-right text-base text-black dark:text-white"
-                        amount={cart.cost.totalTaxAmount.amount}
-                        currencyCode={cart.cost.totalTaxAmount.currencyCode}
-                      />
-                    </div>
-                    <div className="mb-3 flex items-center justify-between border-b border-neutral-200 pb-1 pt-1 dark:border-neutral-700">
-                      <p>{t("cart.shipping")}</p>
-                      <p className="text-right">
-                        {t("cart.shippingAtCheckout")}
-                      </p>
-                    </div>
                     <div className="mb-3 flex items-center justify-between border-b border-neutral-200 pb-1 pt-1 dark:border-neutral-700">
                       <p>{t("cart.total")}</p>
                       <Price

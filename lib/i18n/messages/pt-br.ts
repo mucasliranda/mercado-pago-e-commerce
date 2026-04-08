@@ -192,6 +192,9 @@ export const ptBR = {
     },
     createUser: {
       title: "Criar usuario administrativo",
+      modalTitle: "Novo usuario administrativo",
+      modalDescription:
+        "Crie uma conta interna em um modal compacto, sem perder area util na listagem de usuarios.",
       description:
         "Crie novas contas com role de admin ou super admin e deixe o perfil pronto para os proximos modulos do painel.",
       restrictedDescription:
@@ -263,6 +266,9 @@ export const ptBR = {
         active: "Conta ativa",
         disabled: "Conta desativada",
       },
+      actions: {
+        create: "Criar usuario",
+      },
     },
     userManagement: {
       confirmDelete:
@@ -308,6 +314,8 @@ export const ptBR = {
         "Assim que o catalogo receber itens, eles aparecem aqui com status, categoria, tags e acesso rapido para edicao.",
       noCategory: "Sem categoria",
       noTags: "Sem tags ainda",
+      imageCountSingle: "{{count}} imagem",
+      imageCountPlural: "{{count}} imagens",
       state: {
         active: "Ativo",
         inactive: "Inativo",
@@ -317,10 +325,16 @@ export const ptBR = {
       fields: {
         title: "Titulo do produto",
         slug: "Slug",
+        slugDescription:
+          "Opcional. Se ficar vazio, usamos o titulo para gerar.",
         price: "Preco",
         category: "Categoria",
         description: "Descricao",
-        imageUrl: "URL da imagem",
+        images: "Imagens do produto",
+        imagesDescription:
+          "Envie uma ou varias imagens. A primeira enviada vira a imagem principal.",
+        imagesEditDescription:
+          "Atualmente este produto tem {{count}} imagens. Novos arquivos serao adicionados a galeria existente.",
         imageAlt: "Texto alternativo da imagem",
         tags: "Tags",
         active: "Produto ativo",
@@ -334,11 +348,10 @@ export const ptBR = {
       },
       placeholders: {
         title: "Ex.: Estacao Orbital Pro",
-        slug: "ex-estacao-orbital-pro",
+        slug: "Deixe em branco para gerar automaticamente",
         category: "Selecione uma categoria",
         description:
           "Descreva o produto com clareza para a vitrine e para o checkout.",
-        imageUrl: "https://...",
         imageAlt: "Descricao curta da imagem",
         tags: "lançamento, destaque, premium",
       },
@@ -347,15 +360,21 @@ export const ptBR = {
       form: {
         createTitle: "Novo produto",
         editTitle: "Editando {{title}}",
+        editDescription:
+          "Atualize os dados do produto e envie novas imagens sem sacrificar espaco da listagem principal.",
         description:
           "Preencha os campos essenciais do produto para manter a operacao do catalogo centralizada no painel.",
       },
+      modalTitle: "Novo produto",
+      modalDescription:
+        "Cadastre o produto em um modal mais compacto e envie varias imagens direto para o storage da loja.",
       actions: {
         edit: "Editar",
         create: "Salvar produto",
         update: "Atualizar produto",
         pending: "Salvando produto...",
         createNew: "Criar novo produto",
+        createModal: "Criar produto",
       },
       restrictedBody:
         "Voce pode acompanhar o catalogo, mas somente super admins podem criar ou alterar produtos.",
@@ -365,10 +384,16 @@ export const ptBR = {
         titleRequired: "Informe o titulo do produto.",
         slugRequired: "Informe um slug valido para o produto.",
         invalidPrice: "Informe um preco valido para o produto.",
+        imagesRequired:
+          "Envie pelo menos uma imagem para cadastrar um novo produto.",
+        invalidImageFile:
+          "Use arquivos JPEG, PNG, WEBP ou AVIF com ate 5 MB por imagem.",
         slugInUse: "Ja existe um produto com esse slug.",
         saveFailed: "Nao foi possivel salvar o produto agora.",
         variantSyncFailed:
           "O produto foi salvo, mas houve um erro ao sincronizar as variantes.",
+        imageUploadFailed:
+          "Nao foi possivel enviar as imagens para o storage agora.",
         imageSyncFailed:
           "O produto foi salvo, mas houve um erro ao sincronizar a imagem principal.",
       },

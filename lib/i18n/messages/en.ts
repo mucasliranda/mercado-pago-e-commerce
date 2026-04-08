@@ -193,6 +193,9 @@ export const en = {
     },
     createUser: {
       title: "Create an admin user",
+      modalTitle: "New admin user",
+      modalDescription:
+        "Create an internal account in a compact modal without losing room in the users listing.",
       description:
         "Create new accounts with admin or super admin roles and keep their profile ready for the next admin modules.",
       restrictedDescription:
@@ -264,6 +267,9 @@ export const en = {
         active: "Active account",
         disabled: "Disabled account",
       },
+      actions: {
+        create: "Create user",
+      },
     },
     userManagement: {
       confirmDelete:
@@ -308,6 +314,8 @@ export const en = {
         "As soon as the catalog receives items, they will appear here with status, category, tags, and quick access for editing.",
       noCategory: "No category",
       noTags: "No tags yet",
+      imageCountSingle: "{{count}} image",
+      imageCountPlural: "{{count}} images",
       state: {
         active: "Active",
         inactive: "Inactive",
@@ -317,10 +325,16 @@ export const en = {
       fields: {
         title: "Product title",
         slug: "Slug",
+        slugDescription:
+          "Optional. If left empty, we generate a slug from the title in lowercase, with hyphens and no accents.",
         price: "Price",
         category: "Category",
         description: "Description",
-        imageUrl: "Image URL",
+        images: "Product images",
+        imagesDescription:
+          "Upload one or several images. The first uploaded file becomes the main image.",
+        imagesEditDescription:
+          "This product currently has {{count}} images. New files will be added to the existing gallery.",
         imageAlt: "Image alt text",
         tags: "Tags",
         active: "Active product",
@@ -334,11 +348,10 @@ export const en = {
       },
       placeholders: {
         title: "Example: Orbital Station Pro",
-        slug: "example-orbital-station-pro",
+        slug: "leave blank to generate automatically",
         category: "Select a category",
         description:
           "Describe the product clearly for both the storefront and checkout.",
-        imageUrl: "https://...",
         imageAlt: "Short image description",
         tags: "launch, featured, premium",
       },
@@ -347,15 +360,21 @@ export const en = {
       form: {
         createTitle: "New product",
         editTitle: "Editing {{title}}",
+        editDescription:
+          "Update product details and upload new images without sacrificing space from the main listing.",
         description:
           "Fill in the essential product fields to keep catalog operations centered in the admin panel.",
       },
+      modalTitle: "New product",
+      modalDescription:
+        "Create the product in a more compact modal and upload multiple images directly to store storage.",
       actions: {
         edit: "Edit",
         create: "Save product",
         update: "Update product",
         pending: "Saving product...",
         createNew: "Create new product",
+        createModal: "Create product",
       },
       restrictedBody:
         "You can review the catalog, but only super admins can create or edit products.",
@@ -364,10 +383,15 @@ export const en = {
         titleRequired: "Enter the product title.",
         slugRequired: "Enter a valid product slug.",
         invalidPrice: "Enter a valid product price.",
+        imagesRequired: "Upload at least one image to create a new product.",
+        invalidImageFile:
+          "Use JPEG, PNG, WEBP, or AVIF files with up to 5 MB per image.",
         slugInUse: "A product with this slug already exists.",
         saveFailed: "We could not save the product right now.",
         variantSyncFailed:
           "The product was saved, but there was an error syncing the variants.",
+        imageUploadFailed:
+          "We could not upload the images to storage right now.",
         imageSyncFailed:
           "The product was saved, but there was an error syncing the main image.",
       },

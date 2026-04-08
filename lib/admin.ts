@@ -114,6 +114,7 @@ export type AdminCatalogProduct = {
   featuredImage: Image | null;
   featuredImageUrl: string;
   featuredImageAlt: string;
+  imageCount: number;
   tags: string[];
   variantCount: number;
   updatedAt: string;
@@ -448,6 +449,7 @@ export async function getAdminProducts(): Promise<AdminCatalogProduct[]> {
       featuredImageUrl: featuredImageRow?.image_url || "",
       featuredImageAlt:
         featuredImageRow?.alt_text || product.title || product.name,
+      imageCount: images.length,
       tags: product.tags || [],
       variantCount: product.product_variants?.length || 0,
       updatedAt: product.updated_at,

@@ -35,6 +35,12 @@ function getNumericIdField(formData: FormData, key: string) {
   return value && value > 0 ? Math.trunc(value) : null;
 }
 
+function getUploadedFiles(formData: FormData, key: string) {
+  return formData
+    .getAll(key)
+    .filter((value): value is File => value instanceof File && value.size > 0);
+}
+
 function createAdminRedirect(
   path: string,
   message: string,
@@ -52,8 +58,12 @@ function createAdminRedirect(
   return `${path}?${searchParams.toString()}`;
 }
 
-function createUsersRedirect(message: string, tone: "error" | "success") {
-  return createAdminRedirect("/admin/users", message, tone);
+function createUsersRedirect(
+  message: string,
+  tone: "error" | "success",
+  params?: Record<string, string | undefined>,
+) {
+  return createAdminRedirect("/admin/users", message, tone, params);
 }
 
 function createProductsRedirect(
@@ -151,28 +161,45 @@ export async function createAdminUser(formData: FormData) {
   const email = getField(formData, "email").toLowerCase();
   const password = getField(formData, "password");
   const role = getField(formData, "role");
+  const createParams = { create: "1" };
 
   if (!fullName) {
     redirect(
-      createUsersRedirect(t("admin.createUser.errors.fullNameRequired"), "error"),
+      createUsersRedirect(
+        t("admin.createUser.errors.fullNameRequired"),
+        "error",
+        createParams,
+      ),
     );
   }
 
   if (!email || !email.includes("@")) {
     redirect(
-      createUsersRedirect(t("admin.createUser.errors.invalidEmail"), "error"),
+      createUsersRedirect(
+        t("admin.createUser.errors.invalidEmail"),
+        "error",
+        createParams,
+      ),
     );
   }
 
   if (!password || password.length < 8) {
     redirect(
-      createUsersRedirect(t("admin.createUser.errors.shortPassword"), "error"),
+      createUsersRedirect(
+        t("admin.createUser.errors.shortPassword"),
+        "error",
+        createParams,
+      ),
     );
   }
 
   if (!isAdminRole(role)) {
     redirect(
-      createUsersRedirect(t("admin.createUser.errors.invalidRole"), "error"),
+      createUsersRedirect(
+        t("admin.createUser.errors.invalidRole"),
+        "error",
+        createParams,
+      ),
     );
   }
 
@@ -203,6 +230,7 @@ export async function createAdminUser(formData: FormData) {
           ? t("admin.createUser.errors.emailInUse")
           : t("admin.createUser.errors.createFailed"),
         "error",
+        createParams,
       ),
     );
   }
@@ -224,6 +252,7 @@ export async function createAdminUser(formData: FormData) {
       createUsersRedirect(
         t("admin.createUser.errors.profileSyncFailed"),
         "error",
+        createParams,
       ),
     );
   }
@@ -396,29 +425,94 @@ export async function upsertAdminProduct(formData: FormData) {
   const title = getField(formData, "title");
   const slug = normalizeProductSlug(getField(formData, "slug") || title);
   const description = getField(formData, "description");
-  const imageUrl = getField(formData, "imageUrl");
   const imageAlt = getField(formData, "imageAlt") || title;
   const tags = parseTags(getField(formData, "tags"));
   const categoryId = getNumericIdField(formData, "categoryId");
   const price = getNumericField(formData, "price");
   const active = getCheckboxValue(formData, "active");
   const availableForSale = getCheckboxValue(formData, "availableForSale");
+  const uploadedFiles = getUploadedFiles(formData, "images");
+  const modalParams = productId
+    ? { edit: productId.toString() }
+    : { create: "1" };
+
+  const allowedImageTypes = new Set([
+    "image/jpeg",
+    "image/png",
+    "image/webp",
+    "image/avif",
+  ]);
 
   if (!title) {
     redirect(
-      createProductsRedirect(t("admin.products.errors.titleRequired"), "error"),
+      createProductsRedirect(
+        t("admin.products.errors.titleRequired"),
+        "error",
+        modalParams,
+      ),
     );
   }
 
   if (!slug) {
     redirect(
-      createProductsRedirect(t("admin.products.errors.slugRequired"), "error"),
+      createProductsRedirect(
+        t("admin.products.errors.slugRequired"),
+        "error",
+        modalParams,
+      ),
     );
   }
 
   if (price === null || price < 0) {
     redirect(
-      createProductsRedirect(t("admin.products.errors.invalidPrice"), "error"),
+      createProductsRedirect(
+        t("admin.products.errors.invalidPrice"),
+        "error",
+        modalParams,
+      ),
+    );
+  }
+
+  if (!productId && uploadedFiles.length === 0) {
+    redirect(
+      createProductsRedirect(
+        t("admin.products.errors.imagesRequired"),
+        "error",
+        modalParams,
+      ),
+    );
+  }
+
+  const invalidFile = uploadedFiles.find(
+    (file) =>
+      !allowedImageTypes.has(file.type) || file.size > 5 * 1024 * 1024,
+  );
+
+  if (invalidFile) {
+    redirect(
+      createProductsRedirect(
+        t("admin.products.errors.invalidImageFile"),
+        "error",
+        modalParams,
+      ),
+    );
+  }
+
+  const existingProduct = productId
+    ? await supabaseAdmin
+        .from("products")
+        .select("id, slug")
+        .eq("id", productId)
+        .maybeSingle<{ id: number; slug: string }>()
+    : null;
+
+  if (existingProduct?.error) {
+    redirect(
+      createProductsRedirect(
+        t("admin.products.errors.saveFailed"),
+        "error",
+        modalParams,
+      ),
     );
   }
 
@@ -462,7 +556,7 @@ export async function upsertAdminProduct(formData: FormData) {
           ? t("admin.products.errors.slugInUse")
           : t("admin.products.errors.saveFailed"),
         "error",
-        productId ? { edit: productId.toString() } : undefined,
+        modalParams,
       ),
     );
   }
@@ -478,7 +572,7 @@ export async function upsertAdminProduct(formData: FormData) {
       createProductsRedirect(
         t("admin.products.errors.variantSyncFailed"),
         "error",
-        { edit: persistedProductId.toString() },
+        modalParams,
       ),
     );
   }
@@ -498,7 +592,7 @@ export async function upsertAdminProduct(formData: FormData) {
         createProductsRedirect(
           t("admin.products.errors.variantSyncFailed"),
           "error",
-          { edit: persistedProductId.toString() },
+          modalParams,
         ),
       );
     }
@@ -520,73 +614,99 @@ export async function upsertAdminProduct(formData: FormData) {
         createProductsRedirect(
           t("admin.products.errors.variantSyncFailed"),
           "error",
-          { edit: persistedProductId.toString() },
+          modalParams,
         ),
       );
     }
   }
 
-  if (imageUrl || imageAlt) {
-    const { data: existingImage, error: existingImageError } =
-      await supabaseAdmin
-        .from("product_images")
-        .select("id, image_url")
-        .eq("product_id", persistedProductId)
-        .order("is_featured", { ascending: false })
-        .order("position", { ascending: true })
-        .limit(1)
-        .maybeSingle<{ id: number; image_url: string }>();
+  const { data: existingImages, error: existingImagesError } = await supabaseAdmin
+    .from("product_images")
+    .select("id, position, is_featured")
+    .eq("product_id", persistedProductId)
+    .order("position", { ascending: true });
 
-    if (existingImageError) {
+  if (existingImagesError) {
+    redirect(
+      createProductsRedirect(
+        t("admin.products.errors.imageSyncFailed"),
+        "error",
+        modalParams,
+      ),
+    );
+  }
+
+  if (uploadedFiles.length) {
+    const existingImageRows =
+      existingImages || ([] as { id: number; position: number; is_featured: boolean }[]);
+    const hasFeaturedImage = existingImageRows.some((image) => image.is_featured);
+    const nextPosition =
+      existingImageRows.reduce(
+        (highest, image) => Math.max(highest, image.position),
+        -1,
+      ) + 1;
+
+    const imageRows = [] as Array<{
+      product_id: number;
+      image_url: string;
+      alt_text: string;
+      position: number;
+      is_featured: boolean;
+      bucket: string;
+      storage_path: string;
+    }>;
+
+    for (const [index, file] of uploadedFiles.entries()) {
+      const extension =
+        file.name.split(".").pop()?.toLowerCase() ||
+        file.type.split("/").pop() ||
+        "jpg";
+      const path = `${persistedProductId}/${Date.now()}-${index}-${crypto.randomUUID()}.${extension}`;
+      const fileBytes = new Uint8Array(await file.arrayBuffer());
+      const { error: uploadError } = await supabaseAdmin.storage
+        .from("product-images")
+        .upload(path, fileBytes, {
+          contentType: file.type,
+          upsert: false,
+        });
+
+      if (uploadError) {
+        redirect(
+          createProductsRedirect(
+            t("admin.products.errors.imageUploadFailed"),
+            "error",
+            modalParams,
+          ),
+        );
+      }
+
+      const { data: publicAsset } = supabaseAdmin.storage
+        .from("product-images")
+        .getPublicUrl(path);
+
+      imageRows.push({
+        product_id: persistedProductId,
+        image_url: publicAsset.publicUrl,
+        alt_text: imageAlt || title,
+        position: nextPosition + index,
+        is_featured: !hasFeaturedImage && index === 0,
+        bucket: "product-images",
+        storage_path: path,
+      });
+    }
+
+    const { error: imageInsertError } = await supabaseAdmin
+      .from("product_images")
+      .insert(imageRows);
+
+    if (imageInsertError) {
       redirect(
         createProductsRedirect(
           t("admin.products.errors.imageSyncFailed"),
           "error",
-          { edit: persistedProductId.toString() },
+          modalParams,
         ),
       );
-    }
-
-    if (existingImage) {
-      const { error: imageUpdateError } = await supabaseAdmin
-        .from("product_images")
-        .update({
-          image_url: imageUrl || existingImage.image_url,
-          alt_text: imageAlt || title,
-          is_featured: true,
-          position: 0,
-        })
-        .eq("id", existingImage.id);
-
-      if (imageUpdateError) {
-        redirect(
-          createProductsRedirect(
-            t("admin.products.errors.imageSyncFailed"),
-            "error",
-            { edit: persistedProductId.toString() },
-          ),
-        );
-      }
-    } else if (imageUrl) {
-      const { error: imageInsertError } = await supabaseAdmin
-        .from("product_images")
-        .insert({
-          product_id: persistedProductId,
-          image_url: imageUrl,
-          alt_text: imageAlt || title,
-          position: 0,
-          is_featured: true,
-        });
-
-      if (imageInsertError) {
-        redirect(
-          createProductsRedirect(
-            t("admin.products.errors.imageSyncFailed"),
-            "error",
-            { edit: persistedProductId.toString() },
-          ),
-        );
-      }
     }
   }
 
@@ -594,6 +714,9 @@ export async function upsertAdminProduct(formData: FormData) {
   revalidatePath("/search");
   revalidatePath("/admin/products");
   revalidatePath(`/product/${slug}`);
+  if (existingProduct?.data?.slug && existingProduct.data.slug !== slug) {
+    revalidatePath(`/product/${existingProduct.data.slug}`);
+  }
 
   redirect(
     createProductsRedirect(
@@ -604,7 +727,6 @@ export async function upsertAdminProduct(formData: FormData) {
         { title },
       ),
       "success",
-      { edit: persistedProductId.toString() },
     ),
   );
 }
